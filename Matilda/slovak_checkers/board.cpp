@@ -200,6 +200,8 @@ namespace sc
 				fill_pieces(PieceColor::Black, i.substr(1));
 			}
 		}
+
+		m_next_moves = get_moves_internal_();
     }
 
 	std::string SlovakCheckersBoard::get_fen_for_player(PieceColor player) const
@@ -358,10 +360,10 @@ namespace sc
             if (landing_square == INVALID_POS)
                 break;
 
-            no_more_captures.push_back({ landing_square });
-
             if (m_pieces[landing_square])
                 break; // if no landing square then piece cannot jump
+
+			no_more_captures.push_back({ landing_square });
 
             auto new_enemies = enemies;
             new_enemies.erase(std::find(new_enemies.begin(), new_enemies.end(), capture_square));

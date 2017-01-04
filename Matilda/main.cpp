@@ -36,10 +36,7 @@ public:
 
 int main()
 {
-
-    sc::SlovakCheckersBoard scb("W:W1,2,3,4,5,6,7,8:B25,26,27,28,29,30,31,32");
-
-	std::cout << scb.get_fen();
+    sc::SlovakCheckersBoard scb("B:W5,6,7,8,9,10,11,12:B18,19,20,24,29,30,31,32");
 
     PerformanceCounter pc;
     pc.StartCounter();
@@ -54,12 +51,12 @@ int main()
 		if (scb.game_ended())
 			break;
 
+		std::cout << scb.get_fen() << std::endl;
+
 		for (int i = 0; i < v.size(); ++i)
 		{
 			std::cout << i << ": " << v[i] << "   ";
 		}
-
-        getchar();
 
 		std::cout << std::endl;
 
@@ -70,7 +67,8 @@ int main()
 			int i;
 			std::cin >> i;
 			scb.perform_move(v[i]);
-            */
+			*/
+            
 		}
 		else
 		{

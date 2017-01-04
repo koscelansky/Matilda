@@ -145,14 +145,14 @@ namespace sc
 
             double best_score = is_max_pass ? ENEMY_IS_WINNER : PLAYER_IS_WINNER;
 
-            std::vector<Move> moves = board.get_moves();
+            const std::vector<Move>& moves = board.get_moves();
             auto best_move = moves.front();
             for (const auto& i : moves)
             {
                 auto new_board = board;
                 new_board.perform_move(i);
 
-                auto score = get_best_move_internal_(new_board, 6);
+                auto score = get_best_move_internal_(new_board, 7);
                 if (is_max_pass && score > best_score)
                 {
                     best_score = score;
