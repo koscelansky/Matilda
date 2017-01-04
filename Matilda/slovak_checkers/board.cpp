@@ -1,5 +1,7 @@
 #include <type_traits>
 
+#include <boost/algorithm/string.hpp>
+
 #include "board.h"
 
 namespace sc
@@ -148,64 +150,88 @@ namespace sc
         m_next_moves = get_moves_internal_();
     }
 
-    SlovakCheckersBoard::SlovakCheckersBoard(const std::string & serialized)
+    SlovakCheckersBoard::SlovakCheckersBoard(const std::string& fen)
     {
+		std::vector<std::string> parts;
+		boost::split(parts, fen, boost::is_any_of(":"), boost::token_compress_off);
+
         static const std::regex valid_re(R"(^Next:\s*(B|W)\s*Board:\s*(.*)$)");
 
-        std::smatch match;
-        if (!std::regex_match(serialized, match, valid_re) || match.size() != 3)
-            throw std::invalid_argument("Serialized board is in wrong format.");
+		if (parts.size() != 3)
+            throw std::invalid_argument("FEN string is in wrong format.");
+
+		if (parts[0].size() != 1)
+			throw std::invalid_argument("Missing current player color in FEN string.");
 
         // we can already set next player
-        m_next_player = static_cast<PieceColor>(match[1].str()[0]);
+        m_next_player = static_cast<PieceColor>(parts[0][0]);
+		parts.erase(parts.begin());
 
-        auto board = match[2].str();
+		auto fill_pieces = [this](PieceColor player, std::string position_str)
+		{
+			std::vector<std::string> positions;
+			boost::split(positions, position_str, boost::is_any_of(","), boost::token_compress_off); 
 
-        static const std::regex words_re(R"([^\s]+)");
-        auto words_begin = std::sregex_iterator(board.begin(), board.end(), words_re);
+			for (auto& i : positions)
+			{
+				if (i.empty())
+					throw std::invalid_argument("Position in FEN is bad.");
 
-        for (std::sregex_iterator i = words_begin; i != std::sregex_iterator(); ++i)
-        {
-            static const std::regex piece_re(R"(([0-9]+):(W|B)(M|K))");
+				PieceType type = PieceType::Man;
+				if (i[0] == 'K')
+				{
+					type = PieceType::King;
+					i.erase(i.begin());
+				}
+				size_t position = std::stoul(i);
 
-            auto piece = i->str();
+				m_pieces[position - 1] = Piece(player, type);
+			}
+		};
 
-            std::smatch piece_match;
-            if (!std::regex_match(piece, piece_match, piece_re) || piece_match.size() != 4)
-                throw std::invalid_argument("Piece serialization is in wrong format.");
-
-            unsigned pos = std::stoul(piece_match[1].str());
-            if (m_pieces[pos])
-                throw std::invalid_argument("Piece position redefined.");
-
-            auto color = static_cast<PieceColor>(piece_match[2].str()[0]);
-            auto type = static_cast<PieceType>(piece_match[3].str()[0]);
-            m_pieces[pos] = Piece(color, type);
-        }
-
-        m_next_moves = get_moves_internal_();
+		for (auto& i : parts)
+		{
+			if (i[0] == 'W')
+			{
+				fill_pieces(PieceColor::White, i.substr(1));
+			}
+			else
+			{
+				fill_pieces(PieceColor::Black, i.substr(1));
+			}
+		}
     }
 
-    std::string SlovakCheckersBoard::serialize() const
+	std::string SlovakCheckersBoard::get_fen_for_player(PieceColor player) const
+	{
+		std::string ret_val(1, static_cast<char>(player));
+		for (size_t i = 0; i < m_pieces.size(); ++i)
+		{
+			if (m_pieces[i].color() == player)
+			{
+				if (m_pieces[i].type() == PieceType::King)
+				{
+					ret_val += 'K';
+				}
+
+				ret_val += std::to_string(i + 1);
+				ret_val += ',';
+			}
+		}
+
+		if (!ret_val.empty())
+		{
+			ret_val.pop_back();
+		}
+
+		return ret_val;
+	}
+
+    std::string SlovakCheckersBoard::get_fen() const
     {
-        std::string ret_val("Next: ");
-        ret_val += static_cast<char>(m_next_player);
+        std::string ret_val(1, static_cast<char>(m_next_player));
 
-        ret_val += " Board: ";
-
-        for (auto it = m_pieces.cbegin(); it != m_pieces.cend(); ++it)
-        {
-            if (*it)
-            {
-                ret_val += std::to_string(std::distance(m_pieces.cbegin(), it));
-                ret_val += ':';
-                ret_val += static_cast<char>(it->color());
-                ret_val += static_cast<char>(it->type());
-                ret_val += ' ';
-            }
-        }
-
-        return ret_val;
+        return ret_val + ':' + get_fen_for_player(PieceColor::White) + ':' + get_fen_for_player(PieceColor::Black);
     }
 
     void SlovakCheckersBoard::perform_move(Move move)

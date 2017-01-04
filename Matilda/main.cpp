@@ -37,7 +37,9 @@ public:
 int main()
 {
 
-    sc::SlovakCheckersBoard scb("Next: B Board: 3:BK 8:WM 14:WM 15:WM 21:WM 22:WM 23:WM");
+    sc::SlovakCheckersBoard scb("W:W1,2,3,4,5,6,7,8:B25,26,27,28,29,30,31,32");
+
+	std::cout << scb.get_fen();
 
     PerformanceCounter pc;
     pc.StartCounter();

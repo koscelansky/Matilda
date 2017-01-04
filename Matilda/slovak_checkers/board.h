@@ -97,7 +97,7 @@ namespace sc
 
         SlovakCheckersBoard(const std::string& serialized);
 
-        std::string serialize() const;
+        std::string get_fen() const;
 
         const PieceColor& next_player() const { return m_next_player; }
 
@@ -120,6 +120,8 @@ namespace sc
         std::vector<Move> get_captures_for_type_(PieceType type) const;
 
         std::vector<Move> get_simple_moves_() const;
+
+		std::string get_fen_for_player(PieceColor player) const;
 
         std::array<Piece, detail::BOARD_SIZE * detail::BOARD_SIZE / 2> m_pieces;
         std::vector<Move> m_next_moves;
