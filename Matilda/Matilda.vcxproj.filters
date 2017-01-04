@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="slovak_checkers\board.cpp">
+      <Filter>slovak_checkers</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="slovak_checkers">
+      <UniqueIdentifier>{ae9b6138-91bc-403d-81ac-cef16e66d175}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="slovak_checkers\board.h">
+      <Filter>slovak_checkers</Filter>
+    </ClInclude>
+    <ClInclude Include="slovak_checkers\move.h">
+      <Filter>slovak_checkers</Filter>
+    </ClInclude>
+    <ClInclude Include="slovak_checkers\piece.h">
+      <Filter>slovak_checkers</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
