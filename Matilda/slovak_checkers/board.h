@@ -125,8 +125,6 @@ namespace sc
 
         std::vector<Move> get_simple_moves_() const;
 
-		std::string get_fen_for_player(PieceColor player) const;
-
         std::array<Piece, detail::BOARD_SIZE * detail::BOARD_SIZE / 2> m_pieces;
         std::vector<Move> m_next_moves;
         PieceColor m_player = PieceColor::White;

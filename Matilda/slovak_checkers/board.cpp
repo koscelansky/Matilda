@@ -227,36 +227,39 @@ namespace sc
 		m_next_moves = get_moves_internal_();
     }
 
-	std::string SlovakCheckersBoard::get_fen_for_player(PieceColor player) const
+	std::string SlovakCheckersBoard::get_fen() const
 	{
-		std::string ret_val(1, static_cast<char>(player));
-		for (size_t i = 0; i < m_pieces.size(); ++i)
-		{
-			if (m_pieces[i].color() == player)
-			{
-				if (m_pieces[i].type() == PieceType::King)
-				{
-					ret_val += 'K';
-				}
+		std::string ret_val;
 
-				ret_val += std::to_string(i + 1);
-				ret_val += ',';
+		ret_val += m_player == PieceColor::White ? 'W' : 'B';
+
+		for (const auto& i : { PieceColor::White, PieceColor::Black })
+		{
+			ret_val += ':';
+			ret_val += i == PieceColor::White ? 'W' : 'B';
+
+			// save pieces
+			for (size_t j = 0; j < m_pieces.size(); ++j)
+			{
+				if (m_pieces[j].color() == i)
+				{
+					if (m_pieces[j].type() == PieceType::King)
+					{
+						ret_val += 'K';
+					}
+
+					ret_val += std::to_string(j + 1);
+					ret_val += ',';
+				}
+			}
+
+			if (!ret_val.empty())
+			{
+				ret_val.pop_back();
 			}
 		}
 
-		if (!ret_val.empty())
-		{
-			ret_val.pop_back();
-		}
-
-		return ret_val;
-	}
-
-    std::string SlovakCheckersBoard::get_fen() const
-    {
-        std::string ret_val(1, static_cast<char>(m_player));
-
-        return ret_val + ':' + get_fen_for_player(PieceColor::White) + ':' + get_fen_for_player(PieceColor::Black);
+        return ret_val;
     }
 
     void SlovakCheckersBoard::perform_move(Move move)
