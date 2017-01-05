@@ -39,31 +39,116 @@ namespace sc
             End, // mark last direction to help iteration
         };
 
+        inline PieceColor opponent(PieceColor player)
+        {
+            switch (player)
+            {
+            case PieceColor::White:
+                return PieceColor::Black;
+            case PieceColor::Black:
+                return PieceColor::White;
+            }
+
+            throw std::invalid_argument("Opponent exists only for valid player.");
+        }
+
         // one side of the checkers board
-        constexpr size_t BOARD_SIZE = 8;
+        const constexpr size_t BOARD_SIZE = 8;
 
         // number of black squares, squared where pieces can be
-        constexpr size_t SQUARES_COUNT = BOARD_SIZE * BOARD_SIZE / 2;
+        const constexpr size_t SQUARES_COUNT = BOARD_SIZE * BOARD_SIZE / 2;
 
 		// invalid position on board
-		constexpr size_t INVALID_POS = std::numeric_limits<size_t>::max();
+        const constexpr size_t INVALID_POS = std::numeric_limits<size_t>::max();
 		
+        using BitBoard = std::bitset<SQUARES_COUNT>;
+
+        // tag for constructing BoardState with starting position
+        struct board_start_t { };
+        const constexpr board_start_t board_start;
+
+        // tag for constructing empty BoardState 
+        struct board_empty_t { };
+        const constexpr board_empty_t board_empty;
+
         // represent one board position as densely as possible 
         // (OK there are maybe some redundant bits, but it will 
         // be mega complicated to use it in 'optimal' way)
         class BoardState
         {
         public:
-            BoardState() 
+            BoardState(board_empty_t) { }
+
+            BoardState(board_start_t)
                 : m_valid_pos(0xff0000ff)
                 , m_player_colors(0x000000ff)
                 , m_piece_type(0x00000000)
             {}
 
+            bool IsPieceAt(size_t position) const
+            {
+                return m_valid_pos.test(position);
+            }
+
+            Piece GetPiece(size_t position) const
+            {
+                if (!IsPieceAt(position))
+                    return Piece();
+
+                auto color = m_player_colors.test(position) ? PieceColor::White : PieceColor::Black;
+                auto type = m_piece_type.test(position) ? PieceType::King : PieceType::Man;
+
+                return Piece(color, type);
+            }
+
+            void SetPiece(size_t position, Piece piece)
+            {
+                m_valid_pos.set(position, bool(piece));
+                m_player_colors.set(position, piece.color() == PieceColor::White);
+                m_piece_type.set(position, piece.type() == PieceType::King);
+            }
+
+            BitBoard GetPieces(PieceColor color, PieceType type = PieceType::Invalid) const
+            {
+                BitBoard ret_val = m_valid_pos; // somebody is there
+
+                switch (color) // mask right color
+                {
+                case PieceColor::White:
+                    ret_val &= m_player_colors;
+                    break;
+                case PieceColor::Black:
+                    ret_val &= ~m_player_colors;
+                    break;
+                }
+
+                switch (type) // mask right type 
+                {
+                case PieceType::Man:
+                    ret_val &= ~m_piece_type;
+                    break;
+                case PieceType::King:
+                    ret_val &= m_piece_type;
+                    break;
+                }
+
+                return ret_val;
+            }
+
+            size_t GetPiecesCount(PieceColor color, PieceType type = PieceType::Invalid) const
+            {
+                return GetPieces(color, type).count();
+            }
+
+            Piece operator[](size_t position) const
+            {
+                return GetPiece(position);
+            }
+
         private:
-            std::bitset<32> m_valid_pos; // valid - 1, invalid - 0
-            std::bitset<32> m_player_colors; // white - 1, black - 0
-            std::bitset<32> m_piece_type; // kings - 1, men - 0
+            BitBoard m_valid_pos; // valid - 1, invalid - 0
+            BitBoard m_player_colors; // white - 1, black - 0
+            BitBoard m_piece_type; // kings - 1, men - 0
         };
 		
     }
@@ -120,13 +205,13 @@ namespace sc
 
         std::vector<Move> get_moves_internal_() const;
 
-        std::vector<std::vector<size_t>> get_captures_rec_(size_t square, Piece piece, std::bitset<32> enemies, detail::Direction direction) const;
+        std::vector<std::vector<size_t>> get_captures_rec_(size_t square, Piece piece, detail::BitBoard enemies, detail::Direction direction) const;
 
         std::vector<Move> get_captures_for_type(PieceType type) const;
 
         std::vector<Move> get_simple_moves_() const;
 
-        std::array<Piece, detail::BOARD_SIZE * detail::BOARD_SIZE / 2> m_pieces;
+        detail::BoardState m_board;
         std::vector<Move> m_next_moves;
         PieceColor m_player = PieceColor::White;
         Winner m_winner = Winner::Undefined;
@@ -178,37 +263,12 @@ namespace sc
 
         double evaluate_board_(const SlovakCheckersBoard& board) const
         {
-            int my_men = 0, enemy_men = 0;
-            int my_kings = 0, enemy_kings = 0;
+            using namespace detail;
 
-            for (const auto& i : board.m_pieces)
-            {
-                if (!i)
-                    continue;
-
-                if (i.color() == m_identity)
-                {
-                    if (i.type() == PieceType::Man)
-                    {
-                        ++my_men;
-                    }
-                    else
-                    {
-                        ++my_kings;
-                    }
-                }
-                else
-                {
-                    if (i.type() == PieceType::Man)
-                    {
-                        ++enemy_men;
-                    }
-                    else
-                    {
-                        ++enemy_kings;
-                    }
-                }
-            }
+            int my_men = board.m_board.GetPiecesCount(m_identity, PieceType::Man);
+            int enemy_men = board.m_board.GetPiecesCount(opponent(m_identity), PieceType::Man);
+            int my_kings = board.m_board.GetPiecesCount(m_identity, PieceType::King); 
+            int enemy_kings = board.m_board.GetPiecesCount(opponent(m_identity), PieceType::King);
 
             return (my_men)+(my_kings * 5) - (enemy_men)-(enemy_kings * 5);
         }

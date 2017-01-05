@@ -159,21 +159,13 @@ namespace sc
 
 
     SlovakCheckersBoard::SlovakCheckersBoard()
+        : m_board(board_start)
     {
-        for (auto i = 0u; i < BOARD_SIZE; ++i)
-        {
-            m_pieces[i] = Piece(PieceColor::White, PieceType::Man);
-        }
-
-        for (auto i = m_pieces.size() - BOARD_SIZE; i < m_pieces.size(); ++i)
-        {
-            m_pieces[i] = Piece(PieceColor::Black, PieceType::Man);
-        }
-
         m_next_moves = get_moves_internal_();
     }
 
     SlovakCheckersBoard::SlovakCheckersBoard(const std::string& fen)
+        : m_board(board_empty)
     {
 		std::vector<std::string> parts;
 		boost::split(parts, fen, boost::is_any_of(":"), boost::token_compress_off);
@@ -208,7 +200,7 @@ namespace sc
 				}
 				size_t position = std::stoul(i);
 
-				m_pieces[position - 1] = Piece(player, type);
+				m_board.SetPiece(position - 1, Piece(player, type));
 			}
 		};
 
@@ -239,11 +231,13 @@ namespace sc
 			ret_val += i == PieceColor::White ? 'W' : 'B';
 
 			// save pieces
-			for (size_t j = 0; j < m_pieces.size(); ++j)
+			for (size_t j = 0; j < SQUARES_COUNT; ++j)
 			{
-				if (m_pieces[j].color() == i)
+                Piece piece_j = m_board[j];
+
+				if (piece_j.color() == i)
 				{
-					if (m_pieces[j].type() == PieceType::King)
+					if (piece_j.type() == PieceType::King)
 					{
 						ret_val += 'K';
 					}
@@ -264,8 +258,8 @@ namespace sc
 
     void SlovakCheckersBoard::perform_move(Move move)
     {
-        auto active_piece = m_pieces[move.steps().front()];
-        m_pieces[move.steps().front()] = Piece();
+        auto active_piece = m_board[move.steps().front()];
+        m_board.SetPiece(move.steps().front(), Piece());
 
         if (move.type() == MoveType::Jump)
         {
@@ -280,17 +274,17 @@ namespace sc
                 {
                     start = get_next_square(start, dir);
 
-                    if (m_pieces[start])
+                    if (m_board.IsPieceAt(start))
                     {
-                        assert(m_pieces[start].color() != m_player);
-                        m_pieces[start] = Piece();
+                        assert(m_board[start].color() != m_player);
+                        m_board.SetPiece(start, Piece());
                         break;
                     }
                 }
             }
         }
 
-        m_pieces[move.steps().back()] = active_piece;
+        m_board.SetPiece(move.steps().back(), active_piece);
 
         if (active_piece.type() == PieceType::Man)
         {
@@ -298,19 +292,19 @@ namespace sc
             {
                 if (move.steps().back() >= 28)
                 {
-                    m_pieces[move.steps().back()] = m_pieces[move.steps().back()].get_promoted();
+                    m_board.SetPiece(move.steps().back(), m_board[move.steps().back()].get_promoted());
                 }
             }
             else
             {
                 if (move.steps().back() < 4)
                 {
-                    m_pieces[move.steps().back()] = m_pieces[move.steps().back()].get_promoted();
+                    m_board.SetPiece(move.steps().back(), m_board[move.steps().back()].get_promoted());
                 }
             }
         }
 
-        m_player = m_player == PieceColor::White ? PieceColor::Black : PieceColor::White;
+        m_player = opponent(m_player);
 
         // check if game doesn't ended with this move 
 
@@ -318,15 +312,9 @@ namespace sc
 
         if (m_next_moves.empty())
         {
-            bool white_has_pieces = std::any_of(m_pieces.begin(), m_pieces.end(), [](const auto& i)
-            {
-                return i.color() == PieceColor::White;
-            });
+            bool white_has_pieces = m_board.GetPiecesCount(PieceColor::White) > 0;
 
-            bool black_has_pieces = std::any_of(m_pieces.begin(), m_pieces.end(), [](const auto& i)
-            {
-                return i.color() == PieceColor::Black;
-            });
+            bool black_has_pieces = m_board.GetPiecesCount(PieceColor::Black) > 0;
 
             if (white_has_pieces && black_has_pieces)
             {
@@ -356,7 +344,7 @@ namespace sc
         return ret_val;
     }
 
-    std::vector<std::vector<size_t>> SlovakCheckersBoard::get_captures_rec_(size_t square, Piece piece, std::bitset<32> enemies, detail::Direction direction) const
+    std::vector<std::vector<size_t>> SlovakCheckersBoard::get_captures_rec_(size_t square, Piece piece, BitBoard enemies, detail::Direction direction) const
     {
         std::vector<std::vector<size_t>> ret_val;
 
@@ -366,7 +354,7 @@ namespace sc
         {
             capture_square = get_next_square(capture_square, direction);
 
-            if (capture_square == INVALID_POS || m_pieces[capture_square].color() == piece.color())
+            if (capture_square == INVALID_POS || m_board[capture_square].color() == piece.color())
                 return ret_val;
 
 			// if there is enemy
@@ -387,7 +375,7 @@ namespace sc
             if (landing_square == INVALID_POS)
                 break;
 
-            if (m_pieces[landing_square])
+            if (m_board.IsPieceAt(landing_square))
                 break; // if no landing square then piece cannot jump
 
 			no_more_captures.push_back({ landing_square });
@@ -425,38 +413,25 @@ namespace sc
 
     std::vector<Move> SlovakCheckersBoard::get_captures_for_type(PieceType type) const
     {
-        std::vector<size_t> active_pieces;
-		std::bitset<32> enemies_pos = 0;
+        Piece active_piece(m_player, type);
 
-        for (size_t i = 0; i < m_pieces.size(); ++i)
-        {
-            if (!m_pieces[i])
-                continue;
-
-            if (m_pieces[i].color() == m_player)
-            {
-                if (m_pieces[i].type() == type)
-                {
-                    active_pieces.push_back(i);
-                }
-            }
-            else
-            {
-				enemies_pos.set(i); // add bit for corresponding piece
-            }
-        }
+        BitBoard active_pos = m_board.GetPieces(m_player, type);
+        BitBoard enemies_pos = m_board.GetPieces(opponent(m_player));
 
         std::vector<std::vector<size_t>> paths;
 
-        for (const auto& i : active_pieces)
+        for (size_t i = 0; i < SQUARES_COUNT; ++i)
         {
-            Direction piece_directions = get_directions_for_piece(m_pieces[i]);
-            for (Direction new_dir = Direction::Begin; new_dir < Direction::End; new_dir = new_dir << 1)
+            if (!active_pos.test(i))
+                continue;
+
+            Direction piece_directions = get_directions_for_piece(active_piece);
+            for (Direction dir = Direction::Begin; dir < Direction::End; dir = dir << 1)
             {
-                if ((piece_directions & new_dir) != new_dir)
+                if ((piece_directions & dir) != dir)
                     continue;
 
-                for (auto&& x : get_captures_rec_(i, m_pieces[i], enemies_pos, new_dir))
+                for (auto&& x : get_captures_rec_(i, active_piece, enemies_pos, dir))
                 {
                     x.insert(x.begin(), i);
                     paths.push_back(std::move(x));
@@ -475,22 +450,19 @@ namespace sc
 
     std::vector<Move> SlovakCheckersBoard::get_simple_moves_() const
     {
-        std::vector<size_t> active_pieces;
-
-        for (auto it = m_pieces.begin(); it != m_pieces.end(); ++it)
-        {
-            if (it->color() == m_player)
-            {
-                active_pieces.push_back(std::distance(m_pieces.begin(), it));
-            }
-        }
+        BitBoard active_pos = m_board.GetPieces(m_player);
 
         std::vector<Move> ret_val;
 
         // possible moves
-        for (const auto& i : active_pieces)
+        for (size_t i = 0; i < SQUARES_COUNT; ++i)
         {
-            Direction piece_directions = get_directions_for_piece(m_pieces[i]);
+            if (!active_pos.test(i))
+                continue;
+
+            Piece active_piece = m_board[i];
+
+            Direction piece_directions = get_directions_for_piece(active_piece);
             for (Direction new_dir = Direction::Begin; new_dir < Direction::End; new_dir = new_dir << 1)
             {
                 if ((piece_directions & new_dir) != new_dir)
@@ -504,7 +476,7 @@ namespace sc
                     if (next_square == INVALID_POS)
                         break; // end of board
 
-                    if (!m_pieces[next_square]) // check if empty
+                    if (!m_board.IsPieceAt(next_square)) // check if empty
                     {
                         ret_val.emplace_back(std::vector<size_t>{ i, next_square }, MoveType::SimpleMove);
                     }
@@ -513,7 +485,7 @@ namespace sc
                         break;
                     }
 
-                    if (m_pieces[i].type() == PieceType::Man)
+                    if (active_piece.type() == PieceType::Man)
                         break;
                 }
             }
@@ -542,9 +514,9 @@ namespace sc
 
                 if (!is_white)
                 {
-                    if (board.m_pieces[num])
+                    if (board.m_board[num])
                     {
-                        lhs << " " << board.m_pieces[num] << " |";
+                        lhs << " " << board.m_board[num] << " |";
                     }
                     else
                     {
