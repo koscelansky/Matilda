@@ -343,11 +343,11 @@ namespace sc
     {
         std::vector<Move> ret_val;
 
-        ret_val = get_captures_for_type_(PieceType::King);
+        ret_val = get_captures_for_type(PieceType::King);
         if (!ret_val.empty())
             return ret_val;
 
-        ret_val = get_captures_for_type_(PieceType::Man);
+        ret_val = get_captures_for_type(PieceType::Man);
         if (!ret_val.empty())
             return ret_val;
 
@@ -356,7 +356,7 @@ namespace sc
         return ret_val;
     }
 
-    std::vector<std::vector<size_t>> SlovakCheckersBoard::get_captures_rec_(size_t square, Piece piece, std::vector<size_t> enemies, detail::Direction direction) const
+    std::vector<std::vector<size_t>> SlovakCheckersBoard::get_captures_rec_(size_t square, Piece piece, uint32_t enemies, detail::Direction direction) const
     {
         std::vector<std::vector<size_t>> ret_val;
 
@@ -369,7 +369,8 @@ namespace sc
             if (capture_square == INVALID_POS || m_pieces[capture_square].color() == piece.color())
                 return ret_val;
 
-            if (std::find(enemies.begin(), enemies.end(), capture_square) != enemies.end())
+			// if there is enemy
+            if (enemies & (1 << capture_square)) 
                 break;
 
             if (piece.type() == PieceType::Man)
@@ -391,8 +392,7 @@ namespace sc
 
 			no_more_captures.push_back({ landing_square });
 
-            auto new_enemies = enemies;
-            new_enemies.erase(std::find(new_enemies.begin(), new_enemies.end(), capture_square));
+            auto new_enemies = enemies & ~(1 << capture_square);
 
             Direction piece_directions = get_directions_for_piece(piece);
             for (Direction new_dir = Direction::Begin; new_dir < Direction::End; new_dir = new_dir << 1)
@@ -422,25 +422,26 @@ namespace sc
         return ret_val;
     }
 
-    std::vector<Move> SlovakCheckersBoard::get_captures_for_type_(PieceType type) const
+    std::vector<Move> SlovakCheckersBoard::get_captures_for_type(PieceType type) const
     {
-        std::vector<size_t> active_pieces, enemies;
+        std::vector<size_t> active_pieces;
+		uint32_t enemies_pos = 0;
 
-        for (auto it = m_pieces.begin(); it != m_pieces.end(); ++it)
+        for (size_t i = 0; i < m_pieces.size(); ++i)
         {
-            if (!*it)
+            if (!m_pieces[i])
                 continue;
 
-            if (it->color() == m_player)
+            if (m_pieces[i].color() == m_player)
             {
-                if (it->type() == type)
+                if (m_pieces[i].type() == type)
                 {
-                    active_pieces.push_back(std::distance(m_pieces.begin(), it));
+                    active_pieces.push_back(i);
                 }
             }
             else
             {
-                enemies.push_back(std::distance(m_pieces.begin(), it));
+				enemies_pos |= 1 << i; // add bit for corresponding piece
             }
         }
 
@@ -454,7 +455,7 @@ namespace sc
                 if ((piece_directions & new_dir) != new_dir)
                     continue;
 
-                for (auto&& x : get_captures_rec_(i, m_pieces[i], enemies, new_dir))
+                for (auto&& x : get_captures_rec_(i, m_pieces[i], enemies_pos, new_dir))
                 {
                     x.insert(x.begin(), i);
                     paths.push_back(std::move(x));

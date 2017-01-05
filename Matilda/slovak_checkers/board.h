@@ -119,9 +119,9 @@ namespace sc
 
         std::vector<Move> get_moves_internal_() const;
 
-        std::vector<std::vector<size_t>> get_captures_rec_(size_t square, Piece piece, std::vector<size_t> enemies, detail::Direction direction) const;
+        std::vector<std::vector<size_t>> get_captures_rec_(size_t square, Piece piece, uint32_t enemies, detail::Direction direction) const;
 
-        std::vector<Move> get_captures_for_type_(PieceType type) const;
+        std::vector<Move> get_captures_for_type(PieceType type) const;
 
         std::vector<Move> get_simple_moves_() const;
 
