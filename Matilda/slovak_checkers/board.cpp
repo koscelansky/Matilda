@@ -31,57 +31,80 @@ namespace sc
             return static_cast<Direction>(static_cast<T>(lhs) << rhs);
         }
 
-        constexpr size_t INVALID_POS = std::numeric_limits<size_t>::max();
+		size_t get_next_square(size_t origin, Direction direction)
+		{
+			if (origin < 0 || origin > SQUARES_COUNT)
+				throw std::out_of_range("Origin out of bounds.");
 
-        size_t get_next_square(size_t origin, Direction direction)
-        {
-            if (origin < 0 || origin > SQUARES_COUNT)
-                throw std::out_of_range("Origin out of bounds.");
+			// alias for shorter code
+			const constexpr size_t X = INVALID_POS;
 
-            auto rem_by_8 = origin % 8;
-
-            switch (direction)
-            {
-            case Direction::NE:
-            {
-                if (origin < 4 || rem_by_8 == 3)
-                    return INVALID_POS;
-                else if (rem_by_8 >= 4)
-                    return origin - 4;
-                else
-                    return origin - 3;
-            }
-            case Direction::SE:
-            {
-                if (origin >= 28 || rem_by_8 == 3)
-                    return INVALID_POS;
-                else if (rem_by_8 >= 4)
-                    return origin + 4;
-                else
-                    return origin + 5;
-            }
-            case Direction::SW:
-            {
-                if (origin >= 28 || rem_by_8 == 4)
-                    return INVALID_POS;
-                else if (rem_by_8 >= 4)
-                    return origin + 3;
-                else
-                    return origin + 4;
-            }
-            case Direction::NW:
-            {
-                if (origin < 4 || rem_by_8 == 4)
-                    return INVALID_POS;
-                else if (rem_by_8 >= 4)
-                    return origin - 5;
-                else
-                    return origin - 4;
-            }
-            default:
-                throw std::runtime_error("Unknown direction.");
-            }
-        }
+			switch (direction)
+			{
+				case Direction::NE:
+				{
+					static const size_t lookup[] = 
+					{ 
+						X, X, X, X, 
+						0, 1, 2, 3, 
+						5, 6, 7, X, 
+						8, 9, 10, 11, 
+						13, 14, 15, X, 
+						16, 17, 18, 19, 
+						21, 22, 23, X, 
+						24, 25, 26, 27 
+					};
+					return lookup[origin];
+				}
+				case Direction::SE:
+				{
+					static const size_t lookup[] = 
+					{ 
+						5, 6, 7, X, 
+						8, 9, 10, 11, 
+						13, 14, 15, X, 
+						16, 17, 18, 19, 
+						21, 22, 23, X, 
+						24, 25, 26, 27, 
+						29, 30, 31, X, 
+						X, X, X, X 
+					};
+					return lookup[origin];
+				}
+				case Direction::SW:
+				{
+					static const size_t lookup[] = 
+					{ 
+						4, 5, 6, 7, 
+						X, 8, 9, 10, 
+						12, 13, 14, 15, 
+						X, 16, 17, 18, 
+						20, 21, 22, 23, 
+						X, 24, 25, 26, 
+						28, 29, 30, 31, 
+						X, X, X, X 
+					};
+					return lookup[origin];
+				}
+				case Direction::NW:
+				{
+					static const size_t lookup[] = 
+					{
+						X, X, X, X, 
+						X, 0, 1, 2, 
+						4, 5, 6, 7, 
+						X, 8, 9, 10, 
+						12, 13, 14, 15, 
+						X, 16, 17, 18, 
+						20, 21, 22, 23, 
+						X, 24, 25, 26 
+					};
+					return lookup[origin];
+				}
+				default:
+					throw std::runtime_error("Unknown direction.");
+			}
+		}
 
         Direction get_direction(size_t start, size_t end)
         {

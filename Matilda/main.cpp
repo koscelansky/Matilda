@@ -34,9 +34,11 @@ public:
     }
 };
 
+
+
 int main()
 {
-    sc::SlovakCheckersBoard scb("B:W5,6,7,8,9,10,11,12:B18,19,20,24,29,30,31,32");
+    sc::SlovakCheckersBoard scb;
 
     PerformanceCounter pc;
     pc.StartCounter();
@@ -75,16 +77,12 @@ int main()
 			scb.perform_move(sc::SlovakCheckersSolver(sc::PieceColor::Black).get_best_move(scb));
 		}
 
-        getchar();
-
         move++;
         if (move == 50)
             break;
 	}
 
     //std::cout << std::fixed << pc.GetCounter() << std::endl;
-
-    getchar();
 
 	return 0; 
 }

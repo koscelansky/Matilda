@@ -44,6 +44,9 @@ namespace sc
         // number of black squares, squared where pieces can be
         constexpr size_t SQUARES_COUNT = BOARD_SIZE * BOARD_SIZE / 2;
 
+		// invalid position on board
+		constexpr size_t INVALID_POS = std::numeric_limits<size_t>::max();
+
         // represent one board position as densly as possible 
         // (ok there are maybe some redundant bits, but it will 
         // be mega complicated to use it in 'optimal' way)
@@ -152,7 +155,7 @@ namespace sc
                 auto new_board = board;
                 new_board.perform_move(i);
 
-                auto score = get_best_move_internal_(new_board, 7);
+                auto score = get_best_move_internal_(new_board, 5);
                 if (is_max_pass && score > best_score)
                 {
                     best_score = score;
