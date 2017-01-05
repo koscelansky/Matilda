@@ -10,11 +10,16 @@
 #include <assert.h>
 #include <bitset>
 
+#include "detail/common.h"
+#include "detail/board_state.h"
+#include "detail/direction.h"
+
 #include "piece.h"
 #include "move.h"
 
 namespace sc
 {
+	using namespace detail;
 
     enum class Winner
     {
@@ -26,27 +31,14 @@ namespace sc
 
     namespace detail
     {
-        enum class Direction : uint32_t
-        {
-            Invalid = 0,
-            Begin = 1, // help iteration
-
-            NE = 1 << 0, // up right
-            SE = 1 << 1, // down right
-            SW = 1 << 2, // down left
-            NW = 1 << 3, // up left
-
-            End, // mark last direction to help iteration
-        };
-
-        inline PieceColor opponent(PieceColor player)
+        inline Color opponent(Color player)
         {
             switch (player)
             {
-            case PieceColor::White:
-                return PieceColor::Black;
-            case PieceColor::Black:
-                return PieceColor::White;
+            case Color::White:
+                return Color::Black;
+            case Color::Black:
+                return Color::White;
             }
 
             throw std::invalid_argument("Opponent exists only for valid player.");
@@ -89,7 +81,7 @@ namespace sc
 
         std::string get_fen() const;
 
-        const PieceColor& next_player() const { return m_player; }
+        const Color& next_player() const { return m_player; }
 
         void perform_move(Move move);
 
@@ -105,15 +97,15 @@ namespace sc
 
         std::vector<Move> get_moves_internal_() const;
 
-        std::vector<std::vector<size_t>> get_captures_rec_(size_t square, Piece piece, detail::BitBoard enemies, detail::Direction direction) const;
+        std::vector<std::vector<size_t>> get_captures_rec_(size_t square, Piece piece, BitBoard enemies, Direction direction) const;
 
-        std::vector<Move> get_captures_for_type(PieceType type) const;
+        std::vector<Move> get_captures_for_type(Type type) const;
 
         std::vector<Move> get_simple_moves_() const;
 
-        detail::BoardState m_board;
+        BoardState m_board;
         std::vector<Move> m_next_moves;
-        PieceColor m_player = PieceColor::White;
+        Color m_player = Color::White;
         Winner m_winner = Winner::Undefined;
     };
 
@@ -122,7 +114,7 @@ namespace sc
     class SlovakCheckersSolver
     {
     public:
-        SlovakCheckersSolver(PieceColor identity)
+        SlovakCheckersSolver(Color identity)
             : m_identity(identity)
         {
         }
@@ -163,14 +155,12 @@ namespace sc
 
         double evaluate_board_(const SlovakCheckersBoard& board) const
         {
-            using namespace detail;
+            size_t my_men = board.m_board.GetPiecesCount(m_identity, Type::Man);
+			size_t enemy_men = board.m_board.GetPiecesCount(opponent(m_identity), Type::Man);
+			size_t my_kings = board.m_board.GetPiecesCount(m_identity, Type::King);
+			size_t enemy_kings = board.m_board.GetPiecesCount(opponent(m_identity), Type::King);
 
-            int my_men = board.m_board.GetPiecesCount(m_identity, PieceType::Man);
-            int enemy_men = board.m_board.GetPiecesCount(opponent(m_identity), PieceType::Man);
-            int my_kings = board.m_board.GetPiecesCount(m_identity, PieceType::King); 
-            int enemy_kings = board.m_board.GetPiecesCount(opponent(m_identity), PieceType::King);
-
-            return (my_men)+(my_kings * 5) - (enemy_men)-(enemy_kings * 5);
+            return static_cast<double>((my_men)+(my_kings * 5)) - (enemy_men)-(enemy_kings * 5);
         }
 
         double get_best_move_internal_(const SlovakCheckersBoard& board, int depth) const
@@ -204,6 +194,6 @@ namespace sc
             return best_score;
         }
 
-        PieceColor m_identity;
+        Color m_identity;
     };
 }

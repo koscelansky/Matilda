@@ -10,6 +10,9 @@
     <Filter Include="slovak_checkers">
       <UniqueIdentifier>{ae9b6138-91bc-403d-81ac-cef16e66d175}</UniqueIdentifier>
     </Filter>
+    <Filter Include="slovak_checkers\detail">
+      <UniqueIdentifier>{1acdca6a-5f54-4ceb-bad3-f83450f8dedf}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="slovak_checkers\board.h">
@@ -20,6 +23,15 @@
     </ClInclude>
     <ClInclude Include="slovak_checkers\piece.h">
       <Filter>slovak_checkers</Filter>
+    </ClInclude>
+    <ClInclude Include="slovak_checkers\detail\board_state.h">
+      <Filter>slovak_checkers\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="slovak_checkers\detail\common.h">
+      <Filter>slovak_checkers\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="slovak_checkers\detail\direction.h">
+      <Filter>slovak_checkers\detail</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

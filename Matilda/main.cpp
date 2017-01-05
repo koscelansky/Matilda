@@ -62,9 +62,9 @@ int main()
 
 		std::cout << std::endl;
 
-		if (scb.next_player() == sc::PieceColor::White)
+		if (scb.next_player() == sc::Color::White)
 		{
-			scb.perform_move(sc::SlovakCheckersSolver(sc::PieceColor::White).get_best_move(scb));
+			scb.perform_move(sc::SlovakCheckersSolver(sc::Color::White).get_best_move(scb));
 			/*
 			int i;
 			std::cin >> i;
@@ -74,7 +74,7 @@ int main()
 		}
 		else
 		{
-			scb.perform_move(sc::SlovakCheckersSolver(sc::PieceColor::Black).get_best_move(scb));
+			scb.perform_move(sc::SlovakCheckersSolver(sc::Color::Black).get_best_move(scb));
 		}
 
         move++;

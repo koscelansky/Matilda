@@ -1,6 +1,7 @@
 #pragma once
 
 #include "common.h"
+#include "../piece.h"
 
 namespace sc
 {
@@ -38,8 +39,8 @@ namespace sc
                 if (!IsPieceAt(position))
                     return Piece();
 
-                auto color = m_player_colors.test(position) ? PieceColor::White : PieceColor::Black;
-                auto type = m_piece_type.test(position) ? PieceType::King : PieceType::Man;
+                auto color = m_player_colors.test(position) ? Color::White : Color::Black;
+                auto type = m_piece_type.test(position) ? Type::King : Type::Man;
 
                 return Piece(color, type);
             }
@@ -47,30 +48,30 @@ namespace sc
             void SetPiece(size_t position, Piece piece)
             {
                 m_valid_pos.set(position, bool(piece));
-                m_player_colors.set(position, piece.color() == PieceColor::White);
-                m_piece_type.set(position, piece.type() == PieceType::King);
+                m_player_colors.set(position, piece.color() == Color::White);
+                m_piece_type.set(position, piece.type() == Type::King);
             }
 
-            BitBoard GetPieces(PieceColor color, PieceType type = PieceType::Invalid) const
+            BitBoard GetPieces(Color color, Type type = Type::Invalid) const
             {
                 BitBoard ret_val = m_valid_pos; // somebody is there
 
                 switch (color) // mask right color
                 {
-                case PieceColor::White:
+                case Color::White:
                     ret_val &= m_player_colors;
                     break;
-                case PieceColor::Black:
+                case Color::Black:
                     ret_val &= ~m_player_colors;
                     break;
                 }
 
                 switch (type) // mask right type 
                 {
-                case PieceType::Man:
+                case Type::Man:
                     ret_val &= ~m_piece_type;
                     break;
-                case PieceType::King:
+                case Type::King:
                     ret_val &= m_piece_type;
                     break;
                 }
@@ -78,7 +79,7 @@ namespace sc
                 return ret_val;
             }
 
-            size_t GetPiecesCount(PieceColor color, PieceType type = PieceType::Invalid) const
+            size_t GetPiecesCount(Color color, Type type = Type::Invalid) const
             {
                 return GetPieces(color, type).count();
             }

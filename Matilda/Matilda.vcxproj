@@ -151,6 +151,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="slovak_checkers\board.h" />
+    <ClInclude Include="slovak_checkers\detail\board_state.h" />
+    <ClInclude Include="slovak_checkers\detail\common.h" />
+    <ClInclude Include="slovak_checkers\detail\direction.h" />
     <ClInclude Include="slovak_checkers\move.h" />
     <ClInclude Include="slovak_checkers\piece.h" />
   </ItemGroup>

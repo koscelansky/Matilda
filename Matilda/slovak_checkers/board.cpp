@@ -6,157 +6,7 @@
 
 namespace sc
 {
-    using namespace detail;
-
-    namespace
-    {
-        const constexpr Direction operator|(Direction lhs, Direction rhs)
-        {
-            using T = std::underlying_type_t<Direction>;
-
-            return static_cast<Direction>(static_cast<T>(lhs) | static_cast<T>(rhs));
-        }
-
-        const constexpr Direction operator&(Direction lhs, Direction rhs)
-        {
-            using T = std::underlying_type_t<Direction>;
-
-            return static_cast<Direction>(static_cast<T>(lhs) & static_cast<T>(rhs));
-        }
-
-        const constexpr Direction operator<<(Direction lhs, size_t rhs)
-        {
-            using T = std::underlying_type_t<Direction>;
-
-            return static_cast<Direction>(static_cast<T>(lhs) << rhs);
-        }
-
-		size_t get_next_square(size_t origin, Direction direction)
-		{
-			if (origin < 0 || origin > SQUARES_COUNT)
-				throw std::out_of_range("Origin out of bounds.");
-
-			// alias for shorter code
-			const constexpr size_t X = INVALID_POS;
-
-			switch (direction)
-			{
-				case Direction::NE:
-				{
-					static const size_t lookup[] = 
-					{ 
-						     X,  X,  X,  X, 
-						 0,  1,  2,  3, 
-						     5,  6,  7,  X, 
-						 8,  9, 10, 11, 
-						    13, 14, 15,  X, 
-						16, 17, 18, 19, 
-						    21, 22, 23,  X, 
-						24, 25, 26, 27 
-					};
-					return lookup[origin];
-				}
-				case Direction::SE:
-				{
-					static const size_t lookup[] = 
-					{ 
-						     5,  6,  7,  X, 
-						 8,  9, 10, 11, 
-						    13, 14, 15,  X, 
-						16, 17, 18, 19, 
-						    21, 22, 23,  X, 
-						24, 25, 26, 27, 
-						    29, 30, 31,  X, 
-						 X,  X,  X,  X 
-					};
-					return lookup[origin];
-				}
-				case Direction::SW:
-				{
-					static const size_t lookup[] = 
-					{ 
-						     4,  5,  6,  7, 
-						 X,  8,  9, 10, 
-						    12, 13, 14, 15, 
-						 X, 16, 17, 18, 
-						    20, 21, 22, 23, 
-						 X, 24, 25, 26, 
-						    28, 29, 30, 31, 
-						 X,  X,  X,  X 
-					};
-					return lookup[origin];
-				}
-				case Direction::NW:
-				{
-					static const size_t lookup[] = 
-					{
-						     X,  X,  X,  X, 
-						 X,  0,  1,  2, 
-						     4,  5,  6,  7, 
-						 X,  8,  9, 10, 
-						    12, 13, 14, 15, 
-						 X, 16, 17, 18, 
-						    20, 21, 22, 23, 
-						 X, 24, 25, 26 
-					};
-					return lookup[origin];
-				}
-				default:
-					throw std::runtime_error("Unknown direction.");
-			}
-		}
-
-        Direction get_direction(size_t start, size_t end)
-        {
-            for (const auto& dir : { Direction::NE, Direction::NW, Direction::SE, Direction::SW })
-            {
-                auto x = start;
-                while (true)
-                {
-                    x = get_next_square(x, dir);
-
-                    if (x == end)
-                        return dir;
-
-                    if (x == INVALID_POS)
-                        break;
-                }
-            }
-
-            throw std::runtime_error("The is no straight path between selected points.");
-        }
-
-        /**
-        * Returns all direction piece can move (in one bit mask).
-        */
-        Direction get_directions_for_piece(Piece piece)
-        {
-            if (piece.type() == PieceType::King)
-                return Direction::NE | Direction::NW | Direction::SE | Direction::SW;
-            else if (piece.color() == PieceColor::Black)
-                return Direction::NE | Direction::NW;
-            else
-                return Direction::SE | Direction::SW;
-        }
-
-        Direction get_opposite_direction(Direction dir)
-        {
-            switch (dir)
-            {
-            case Direction::NE:
-                return Direction::SW;
-            case Direction::SE:
-                return Direction::NW;
-            case Direction::SW:
-                return Direction::NE;
-            case Direction::NW:
-                return Direction::SE;
-            }
-
-            throw std::invalid_argument("Invalid direction specified.");
-        }
-    }
-
+	using namespace detail;
 
     SlovakCheckersBoard::SlovakCheckersBoard()
         : m_board(board_start)
@@ -179,10 +29,10 @@ namespace sc
 			throw std::invalid_argument("Missing current player color in FEN string.");
 
         // we can already set next player
-        m_player = static_cast<PieceColor>(parts[0][0]);
+        m_player = static_cast<Color>(parts[0][0]);
 		parts.erase(parts.begin());
 
-		auto fill_pieces = [this](PieceColor player, std::string position_str)
+		auto fill_pieces = [this](Color player, std::string position_str)
 		{
 			std::vector<std::string> positions;
 			boost::split(positions, position_str, boost::is_any_of(","), boost::token_compress_off); 
@@ -192,10 +42,10 @@ namespace sc
 				if (i.empty())
 					throw std::invalid_argument("Position in FEN is bad.");
 
-				PieceType type = PieceType::Man;
+				Type type = Type::Man;
 				if (i[0] == 'K')
 				{
-					type = PieceType::King;
+					type = Type::King;
 					i.erase(i.begin());
 				}
 				size_t position = std::stoul(i);
@@ -208,11 +58,11 @@ namespace sc
 		{
 			if (i[0] == 'W')
 			{
-				fill_pieces(PieceColor::White, i.substr(1));
+				fill_pieces(Color::White, i.substr(1));
 			}
 			else
 			{
-				fill_pieces(PieceColor::Black, i.substr(1));
+				fill_pieces(Color::Black, i.substr(1));
 			}
 		}
 
@@ -223,12 +73,12 @@ namespace sc
 	{
 		std::string ret_val;
 
-		ret_val += m_player == PieceColor::White ? 'W' : 'B';
+		ret_val += m_player == Color::White ? 'W' : 'B';
 
-		for (const auto& i : { PieceColor::White, PieceColor::Black })
+		for (const auto& i : { Color::White, Color::Black })
 		{
 			ret_val += ':';
-			ret_val += i == PieceColor::White ? 'W' : 'B';
+			ret_val += i == Color::White ? 'W' : 'B';
 
 			// save pieces
 			for (size_t j = 0; j < SQUARES_COUNT; ++j)
@@ -237,7 +87,7 @@ namespace sc
 
 				if (piece_j.color() == i)
 				{
-					if (piece_j.type() == PieceType::King)
+					if (piece_j.type() == Type::King)
 					{
 						ret_val += 'K';
 					}
@@ -286,9 +136,9 @@ namespace sc
 
         m_board.SetPiece(move.steps().back(), active_piece);
 
-        if (active_piece.type() == PieceType::Man)
+        if (active_piece.type() == Type::Man)
         {
-            if (active_piece.color() == PieceColor::White)
+            if (active_piece.color() == Color::White)
             {
                 if (move.steps().back() >= 28)
                 {
@@ -312,9 +162,9 @@ namespace sc
 
         if (m_next_moves.empty())
         {
-            bool white_has_pieces = m_board.GetPiecesCount(PieceColor::White) > 0;
+            bool white_has_pieces = m_board.GetPiecesCount(Color::White) > 0;
 
-            bool black_has_pieces = m_board.GetPiecesCount(PieceColor::Black) > 0;
+            bool black_has_pieces = m_board.GetPiecesCount(Color::Black) > 0;
 
             if (white_has_pieces && black_has_pieces)
             {
@@ -331,11 +181,11 @@ namespace sc
     {
         std::vector<Move> ret_val;
 
-        ret_val = get_captures_for_type(PieceType::King);
+        ret_val = get_captures_for_type(Type::King);
         if (!ret_val.empty())
             return ret_val;
 
-        ret_val = get_captures_for_type(PieceType::Man);
+        ret_val = get_captures_for_type(Type::Man);
         if (!ret_val.empty())
             return ret_val;
 
@@ -361,7 +211,7 @@ namespace sc
             if (enemies.test(capture_square)) 
                 break;
 
-            if (piece.type() == PieceType::Man)
+            if (piece.type() == Type::Man)
                 return ret_val;
         }
 
@@ -399,7 +249,7 @@ namespace sc
                 }
             }
 
-            if (piece.type() == PieceType::Man)
+            if (piece.type() == Type::Man)
                 break;
         }
 
@@ -411,7 +261,7 @@ namespace sc
         return ret_val;
     }
 
-    std::vector<Move> SlovakCheckersBoard::get_captures_for_type(PieceType type) const
+    std::vector<Move> SlovakCheckersBoard::get_captures_for_type(Type type) const
     {
         Piece active_piece(m_player, type);
 
@@ -485,7 +335,7 @@ namespace sc
                         break;
                     }
 
-                    if (active_piece.type() == PieceType::Man)
+                    if (active_piece.type() == Type::Man)
                         break;
                 }
             }
@@ -558,7 +408,7 @@ namespace sc
         else
         {
             lhs << "Next player: ";
-            lhs << (board.next_player() == PieceColor::Black ? "Black" : "White");
+            lhs << (board.next_player() == Color::Black ? "Black" : "White");
             lhs << "\n\n";
         }
 

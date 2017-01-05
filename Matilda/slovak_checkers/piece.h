@@ -5,14 +5,14 @@
 
 namespace sc
 {
-    enum class PieceColor
+    enum class Color
     {
         Invalid = 0,
         White = 'W',
         Black = 'B',
     };
 
-    enum class PieceType
+    enum class Type
     {
         Invalid = 0,
         Man = 'M',
@@ -24,34 +24,34 @@ namespace sc
     public:
         Piece() = default;
 
-        Piece(PieceColor color, PieceType type)
+        Piece(Color color, Type type)
             : m_color(color)
             , m_type(type)
         {
-            if ((color == PieceColor::Invalid && type != PieceType::Invalid)
-                || (color != PieceColor::Invalid && type == PieceType::Invalid))
+            if ((color == Color::Invalid && type != Type::Invalid)
+                || (color != Color::Invalid && type == Type::Invalid))
                 throw std::invalid_argument("Whole piece should be either valid or not.");
         }
 
-        const PieceColor& color() const { return m_color; }
+        const Color& color() const { return m_color; }
 
-        const PieceType& type() const { return m_type; }
+        const Type& type() const { return m_type; }
 
         Piece get_promoted() const
         {
-            if (m_type == PieceType::King)
+            if (m_type == Type::King)
                 throw std::runtime_error("Kings cannot be promoted.");
 
-            return Piece(m_color, PieceType::King);
+            return Piece(m_color, Type::King);
         }
 
         explicit operator bool() const
         {
-            return m_type != PieceType::Invalid;
+            return m_type != Type::Invalid;
         }
     private:
-        PieceColor m_color = PieceColor::Invalid;
-        PieceType m_type = PieceType::Invalid;
+        Color m_color = Color::Invalid;
+        Type m_type = Type::Invalid;
     };
 
     inline std::ostream& operator<<(std::ostream& lhs, const Piece& rhs)
