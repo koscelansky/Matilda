@@ -187,7 +187,7 @@ namespace sc
 			throw std::invalid_argument("Missing current player color in FEN string.");
 
         // we can already set next player
-        m_next_player = static_cast<PieceColor>(parts[0][0]);
+        m_player = static_cast<PieceColor>(parts[0][0]);
 		parts.erase(parts.begin());
 
 		auto fill_pieces = [this](PieceColor player, std::string position_str)
@@ -254,7 +254,7 @@ namespace sc
 
     std::string SlovakCheckersBoard::get_fen() const
     {
-        std::string ret_val(1, static_cast<char>(m_next_player));
+        std::string ret_val(1, static_cast<char>(m_player));
 
         return ret_val + ':' + get_fen_for_player(PieceColor::White) + ':' + get_fen_for_player(PieceColor::Black);
     }
@@ -279,7 +279,7 @@ namespace sc
 
                     if (m_pieces[start])
                     {
-                        assert(m_pieces[start].color() != m_next_player);
+                        assert(m_pieces[start].color() != m_player);
                         m_pieces[start] = Piece();
                         break;
                     }
@@ -307,7 +307,7 @@ namespace sc
             }
         }
 
-        m_next_player = m_next_player == PieceColor::White ? PieceColor::Black : PieceColor::White;
+        m_player = m_player == PieceColor::White ? PieceColor::Black : PieceColor::White;
 
         // check if game doesn't ended with this move 
 
@@ -428,7 +428,7 @@ namespace sc
             if (!*it)
                 continue;
 
-            if (it->color() == m_next_player)
+            if (it->color() == m_player)
             {
                 if (it->type() == type)
                 {
@@ -474,7 +474,7 @@ namespace sc
 
         for (auto it = m_pieces.begin(); it != m_pieces.end(); ++it)
         {
-            if (it->color() == m_next_player)
+            if (it->color() == m_player)
             {
                 active_pieces.push_back(std::distance(m_pieces.begin(), it));
             }

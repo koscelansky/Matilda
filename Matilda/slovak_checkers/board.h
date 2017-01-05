@@ -103,7 +103,7 @@ namespace sc
 
         std::string get_fen() const;
 
-        const PieceColor& next_player() const { return m_next_player; }
+        const PieceColor& next_player() const { return m_player; }
 
         void perform_move(Move move);
 
@@ -129,7 +129,7 @@ namespace sc
 
         std::array<Piece, detail::BOARD_SIZE * detail::BOARD_SIZE / 2> m_pieces;
         std::vector<Move> m_next_moves;
-        PieceColor m_next_player = PieceColor::White;
+        PieceColor m_player = PieceColor::White;
         Winner m_winner = Winner::Undefined;
     };
 
