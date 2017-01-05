@@ -46,9 +46,9 @@ namespace sc
 
 		// invalid position on board
 		constexpr size_t INVALID_POS = std::numeric_limits<size_t>::max();
-
-        // represent one board position as densly as possible 
-        // (ok there are maybe some redundant bits, but it will 
+		/*
+        // represent one board position as densely as possible 
+        // (OK there are maybe some redundant bits, but it will 
         // be mega complicated to use it in 'optimal' way)
         class BoardState
         {
@@ -64,6 +64,7 @@ namespace sc
             uint32_t m_player_colors; // white - 1, black - 0
             uint32_t m_piece_type; // kings - 1, men - 0
         };
+		*/
     }
 
     /**
