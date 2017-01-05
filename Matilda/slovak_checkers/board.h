@@ -8,6 +8,7 @@
 #include <iomanip>
 #include <sstream>
 #include <assert.h>
+#include <bitset>
 
 #include "piece.h"
 #include "move.h"
@@ -46,7 +47,7 @@ namespace sc
 
 		// invalid position on board
 		constexpr size_t INVALID_POS = std::numeric_limits<size_t>::max();
-		/*
+		
         // represent one board position as densely as possible 
         // (OK there are maybe some redundant bits, but it will 
         // be mega complicated to use it in 'optimal' way)
@@ -60,11 +61,11 @@ namespace sc
             {}
 
         private:
-            uint32_t m_valid_pos; // valid - 1, invalid - 0
-            uint32_t m_player_colors; // white - 1, black - 0
-            uint32_t m_piece_type; // kings - 1, men - 0
+            std::bitset<32> m_valid_pos; // valid - 1, invalid - 0
+            std::bitset<32> m_player_colors; // white - 1, black - 0
+            std::bitset<32> m_piece_type; // kings - 1, men - 0
         };
-		*/
+		
     }
 
     /**
@@ -119,7 +120,7 @@ namespace sc
 
         std::vector<Move> get_moves_internal_() const;
 
-        std::vector<std::vector<size_t>> get_captures_rec_(size_t square, Piece piece, uint32_t enemies, detail::Direction direction) const;
+        std::vector<std::vector<size_t>> get_captures_rec_(size_t square, Piece piece, std::bitset<32> enemies, detail::Direction direction) const;
 
         std::vector<Move> get_captures_for_type(PieceType type) const;
 

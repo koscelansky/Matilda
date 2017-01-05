@@ -356,7 +356,7 @@ namespace sc
         return ret_val;
     }
 
-    std::vector<std::vector<size_t>> SlovakCheckersBoard::get_captures_rec_(size_t square, Piece piece, uint32_t enemies, detail::Direction direction) const
+    std::vector<std::vector<size_t>> SlovakCheckersBoard::get_captures_rec_(size_t square, Piece piece, std::bitset<32> enemies, detail::Direction direction) const
     {
         std::vector<std::vector<size_t>> ret_val;
 
@@ -370,7 +370,7 @@ namespace sc
                 return ret_val;
 
 			// if there is enemy
-            if (enemies & (1 << capture_square)) 
+            if (enemies.test(capture_square)) 
                 break;
 
             if (piece.type() == PieceType::Man)
@@ -392,7 +392,8 @@ namespace sc
 
 			no_more_captures.push_back({ landing_square });
 
-            auto new_enemies = enemies & ~(1 << capture_square);
+            auto new_enemies = enemies;
+            new_enemies.reset(capture_square);
 
             Direction piece_directions = get_directions_for_piece(piece);
             for (Direction new_dir = Direction::Begin; new_dir < Direction::End; new_dir = new_dir << 1)
@@ -425,7 +426,7 @@ namespace sc
     std::vector<Move> SlovakCheckersBoard::get_captures_for_type(PieceType type) const
     {
         std::vector<size_t> active_pieces;
-		uint32_t enemies_pos = 0;
+		std::bitset<32> enemies_pos = 0;
 
         for (size_t i = 0; i < m_pieces.size(); ++i)
         {
@@ -441,7 +442,7 @@ namespace sc
             }
             else
             {
-				enemies_pos |= 1 << i; // add bit for corresponding piece
+				enemies_pos.set(i); // add bit for corresponding piece
             }
         }
 
