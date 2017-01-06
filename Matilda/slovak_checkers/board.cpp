@@ -233,11 +233,13 @@ namespace sc
             auto new_enemies = enemies;
             new_enemies.reset(capture_square);
 
-            Direction piece_directions = get_directions_for_piece(piece);
-            for (Direction new_dir = Direction::Begin; new_dir < Direction::End; new_dir = new_dir << 1)
+            Directions piece_directions = get_directions_for_piece(piece);
+            for (uint32_t j = 0; j < piece_directions.size(); ++j)
             {
-                if ((piece_directions & new_dir) != new_dir)
-                    continue;
+				if (!piece_directions.test(j))
+					continue; // direction is not set
+
+				Direction new_dir = uint32_to_dir(j);
 
                 if (new_dir == get_opposite_direction(direction))
                     continue;
@@ -275,11 +277,13 @@ namespace sc
             if (!active_pos.test(i))
                 continue;
 
-            Direction piece_directions = get_directions_for_piece(active_piece);
-            for (Direction dir = Direction::Begin; dir < Direction::End; dir = dir << 1)
-            {
-                if ((piece_directions & dir) != dir)
-                    continue;
+            Directions piece_directions = get_directions_for_piece(active_piece);
+			for (uint32_t j = 0; j < piece_directions.size(); ++j)
+			{
+				if (!piece_directions.test(j))
+					continue; // direction is not set
+
+				Direction dir = uint32_to_dir(j);
 
                 for (auto&& x : get_captures_rec_(i, active_piece, enemies_pos, dir))
                 {
@@ -312,11 +316,13 @@ namespace sc
 
             Piece active_piece = m_board[i];
 
-            Direction piece_directions = get_directions_for_piece(active_piece);
-            for (Direction new_dir = Direction::Begin; new_dir < Direction::End; new_dir = new_dir << 1)
-            {
-                if ((piece_directions & new_dir) != new_dir)
-                    continue;
+            Directions piece_directions = get_directions_for_piece(active_piece);
+			for (uint32_t j = 0; j < piece_directions.size(); ++j)
+			{
+				if (!piece_directions.test(j))
+					continue; // direction is not set
+
+				Direction new_dir = uint32_to_dir(j);
 
                 auto next_square = i;
                 while (true)

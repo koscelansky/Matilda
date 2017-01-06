@@ -1,7 +1,9 @@
 #pragma once
 
 #include <stdint.h>
+#include <assert.h>
 #include <initializer_list>
+#include <bitset>
 
 #include "common.h"
 #include "../piece.h"
@@ -12,37 +14,48 @@ namespace sc
 	{
 		enum class Direction : uint32_t
 		{
-			Invalid = 0,
-			Begin = 1, // help iteration
+			NE, // up right
+			SE, // down right
+			SW, // down left
+			NW, // up left
 
-			NE = 1 << 0, // up right
-			SE = 1 << 1, // down right
-			SW = 1 << 2, // down left
-			NW = 1 << 3, // up left
-
-			End, // mark last direction to help iteration
+			Count, // helper to get direction count
 		};
 
-		const constexpr Direction operator|(Direction lhs, Direction rhs)
+		constexpr uint32_t dir_to_uint32(Direction dir) noexcept
 		{
-			using T = std::underlying_type_t<Direction>;
+			static_assert(std::is_same<std::underlying_type_t<Direction>, uint32_t>::value,
+				"Underlying type of direction should be uint32_t");
 
-			return static_cast<Direction>(static_cast<T>(lhs) | static_cast<T>(rhs));
+			return static_cast<uint32_t>(dir);
 		}
 
-		const constexpr Direction operator&(Direction lhs, Direction rhs)
+		constexpr Direction uint32_to_dir(uint32_t n) noexcept
 		{
-			using T = std::underlying_type_t<Direction>;
+			static_assert(std::is_same<std::underlying_type_t<Direction>, uint32_t>::value,
+				"Underlying type of direction should be uint32_t");
 
-			return static_cast<Direction>(static_cast<T>(lhs) & static_cast<T>(rhs));
+			return static_cast<Direction>(n);
 		}
 
-		const constexpr Direction operator<<(Direction lhs, size_t rhs)
-		{
-			using T = std::underlying_type_t<Direction>;
+		// type for holding bit mask for directions
+		using Directions = std::bitset<dir_to_uint32(Direction::Count)>;
 
-			return static_cast<Direction>(static_cast<T>(lhs) << rhs);
-		}
+		const constexpr Directions ALL_DIRECTIONS =
+			1 << dir_to_uint32(Direction::NE) | 
+			1 << dir_to_uint32(Direction::NW) |
+			1 << dir_to_uint32(Direction::SE) | 
+			1 << dir_to_uint32(Direction::SW);
+
+		const constexpr Directions ALL_NORTH =
+			1 << dir_to_uint32(Direction::NE) | 
+			1 << dir_to_uint32(Direction::NW);
+
+		const constexpr Directions ALL_SOUTH =
+			1 << dir_to_uint32(Direction::SE) |
+			1 << dir_to_uint32(Direction::SW);
+
+
 
 		inline size_t get_next_square(size_t origin, Direction direction)
 		{
@@ -142,14 +155,14 @@ namespace sc
 		/**
 		* Returns all direction piece can move (in one bit mask).
 		*/
-		inline Direction get_directions_for_piece(Piece piece)
+		inline Directions get_directions_for_piece(Piece piece)
 		{
 			if (piece.type() == Type::King)
-				return Direction::NE | Direction::NW | Direction::SE | Direction::SW;
+				return ALL_DIRECTIONS;
 			else if (piece.color() == Color::Black)
-				return Direction::NE | Direction::NW;
+				return ALL_NORTH;
 			else
-				return Direction::SE | Direction::SW;
+				return ALL_SOUTH;
 		}
 
 		/**

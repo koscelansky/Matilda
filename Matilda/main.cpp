@@ -43,8 +43,6 @@ int main()
     PerformanceCounter pc;
     pc.StartCounter();
 
-    int move = 0;
-
 	while (true)
 	{
 		std::cout << scb;
@@ -64,25 +62,19 @@ int main()
 
 		if (scb.next_player() == sc::Color::White)
 		{
-			scb.perform_move(sc::SlovakCheckersSolver(sc::Color::White).get_best_move(scb));
-			/*
+			//scb.perform_move(sc::SlovakCheckersSolver(sc::Color::White).get_best_move(scb));
+			
 			int i;
 			std::cin >> i;
 			scb.perform_move(v[i]);
-			*/
-            
 		}
 		else
 		{
 			scb.perform_move(sc::SlovakCheckersSolver(sc::Color::Black).get_best_move(scb));
 		}
-
-        move++;
-        if (move == 50)
-            break;
 	}
 
-    //std::cout << std::fixed << pc.GetCounter() << std::endl;
+	getchar();
 
 	return 0; 
 }
