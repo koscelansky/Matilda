@@ -33,6 +33,7 @@
     <ClInclude Include="slovak_checkers\detail\direction.h">
       <Filter>slovak_checkers\detail</Filter>
     </ClInclude>
+    <ClInclude Include="console_params.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

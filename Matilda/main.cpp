@@ -1,47 +1,23 @@
 #include <iostream>
 
 #include "slovak_checkers/board.h"
+#include "console_params.h"
 
 #include <stdlib.h>
 
-#include <windows.h>
 
-class PerformanceCounter
+int main(int argc, char* argv[])
 {
-private:
-    double m_PCFreq;
-    long long m_CounterStart;
-public:
-    PerformanceCounter()
-    {
-        LARGE_INTEGER Freq;
-        QueryPerformanceFrequency(&Freq);
-        m_PCFreq = static_cast<double>(Freq.QuadPart) / 1000.0;
-        m_CounterStart = 0;
-    }
+	ConsoleParams cp(argc, argv);
 
-    void StartCounter()
-    {
-        LARGE_INTEGER Counter;
-        QueryPerformanceCounter(&Counter);
-        m_CounterStart = Counter.QuadPart;
-    }
-    double GetCounter()
-    {
-        LARGE_INTEGER Counter;
-        QueryPerformanceCounter(&Counter);
-        return static_cast<double>(Counter.QuadPart - m_CounterStart) / m_PCFreq;
-    }
-};
+	if (cp.IsHelpPrintEnabled())
+	{
+		cp.PrintHelp(std::cout);
+		return 0;
+	}
 
 
-
-int main()
-{
     sc::SlovakCheckersBoard scb;
-
-    PerformanceCounter pc;
-    pc.StartCounter();
 
 	while (true)
 	{
