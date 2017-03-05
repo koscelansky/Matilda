@@ -20,8 +20,6 @@ namespace sc
 		std::vector<std::string> parts;
 		boost::split(parts, fen, boost::is_any_of(":"), boost::token_compress_off);
 
-        static const std::regex valid_re(R"(^Next:\s*(B|W)\s*Board:\s*(.*)$)");
-
 		if (parts.size() != 3)
             throw std::invalid_argument("FEN string is in wrong format.");
 

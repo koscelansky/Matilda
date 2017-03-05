@@ -6,22 +6,18 @@
 
 #include <string>
 #include <ostream>
+#include <istream>
+
+enum class PlayerType
+{
+	Human,
+	Computer,
+};
 
 class ConsoleParams
 {
 public:
-	ConsoleParams(int argc, char* argv[])
-		: m_desc("Allowed options")
-	{
-		// declare supported options
-		m_desc.add_options()
-			("help,h", "print help message")
-			("black,b", boost::program_options::value<std::string>(), "set black player")
-			("white,w", boost::program_options::value<std::string>(), "set white player");
-
-		boost::program_options::store(boost::program_options::parse_command_line(argc, argv, m_desc), m_vm);
-		boost::program_options::notify(m_vm);
-	}
+	ConsoleParams(int argc, char* argv[]);
 
 	bool IsHelpPrintEnabled() const { return m_vm.count("help") > 0; }
 

@@ -146,6 +146,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="console_params.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="slovak_checkers\board.cpp" />
   </ItemGroup>

@@ -5,6 +5,7 @@
     <ClCompile Include="slovak_checkers\board.cpp">
       <Filter>slovak_checkers</Filter>
     </ClCompile>
+    <ClCompile Include="console_params.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="slovak_checkers">
