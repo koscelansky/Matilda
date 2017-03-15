@@ -35,6 +35,10 @@
       <Filter>slovak_checkers\detail</Filter>
     </ClInclude>
     <ClInclude Include="console_params.h" />
+    <ClInclude Include="slovak_checkers\player.h">
+      <Filter>slovak_checkers</Filter>
+    </ClInclude>
+    <ClInclude Include="console_player.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

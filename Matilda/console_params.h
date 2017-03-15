@@ -21,6 +21,10 @@ public:
 
 	bool IsHelpPrintEnabled() const { return m_vm.count("help") > 0; }
 
+	PlayerType GetWhitePlayer() const { return m_vm["white"].as<PlayerType>(); }
+
+	PlayerType GetBlackPlayer() const { return m_vm["black"].as<PlayerType>(); }
+
 	void PrintHelp(std::ostream& out) const { out << m_desc; }
 private:
 

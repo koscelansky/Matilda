@@ -152,12 +152,14 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="console_params.h" />
+    <ClInclude Include="console_player.h" />
     <ClInclude Include="slovak_checkers\board.h" />
     <ClInclude Include="slovak_checkers\detail\board_state.h" />
     <ClInclude Include="slovak_checkers\detail\common.h" />
     <ClInclude Include="slovak_checkers\detail\direction.h" />
     <ClInclude Include="slovak_checkers\move.h" />
     <ClInclude Include="slovak_checkers\piece.h" />
+    <ClInclude Include="slovak_checkers\player.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
