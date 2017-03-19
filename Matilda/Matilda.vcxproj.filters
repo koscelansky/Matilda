@@ -2,45 +2,56 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="slovak_checkers\board.cpp">
-      <Filter>slovak_checkers</Filter>
-    </ClCompile>
     <ClCompile Include="console_params.cpp" />
+    <ClCompile Include="slovak_checkers\board\board.cpp">
+      <Filter>slovak_checkers\board</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <Filter Include="slovak_checkers">
-      <UniqueIdentifier>{ae9b6138-91bc-403d-81ac-cef16e66d175}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="slovak_checkers\detail">
-      <UniqueIdentifier>{1acdca6a-5f54-4ceb-bad3-f83450f8dedf}</UniqueIdentifier>
-    </Filter>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="slovak_checkers\board.h">
-      <Filter>slovak_checkers</Filter>
-    </ClInclude>
-    <ClInclude Include="slovak_checkers\move.h">
-      <Filter>slovak_checkers</Filter>
-    </ClInclude>
-    <ClInclude Include="slovak_checkers\piece.h">
-      <Filter>slovak_checkers</Filter>
-    </ClInclude>
-    <ClInclude Include="slovak_checkers\detail\board_state.h">
-      <Filter>slovak_checkers\detail</Filter>
-    </ClInclude>
-    <ClInclude Include="slovak_checkers\detail\common.h">
-      <Filter>slovak_checkers\detail</Filter>
-    </ClInclude>
-    <ClInclude Include="slovak_checkers\detail\direction.h">
-      <Filter>slovak_checkers\detail</Filter>
-    </ClInclude>
     <ClInclude Include="console_params.h" />
-    <ClInclude Include="slovak_checkers\player.h">
+    <ClInclude Include="slovak_checkers\board\detail\board_state.h">
+      <Filter>slovak_checkers\board\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="slovak_checkers\board\detail\common.h">
+      <Filter>slovak_checkers\board\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="slovak_checkers\board\detail\direction.h">
+      <Filter>slovak_checkers\board\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="slovak_checkers\board\board.h">
+      <Filter>slovak_checkers\board</Filter>
+    </ClInclude>
+    <ClInclude Include="slovak_checkers\board\move.h">
+      <Filter>slovak_checkers\board</Filter>
+    </ClInclude>
+    <ClInclude Include="slovak_checkers\board\piece.h">
+      <Filter>slovak_checkers\board</Filter>
+    </ClInclude>
+    <ClInclude Include="slovak_checkers\players\console_player.h">
+      <Filter>slovak_checkers\players</Filter>
+    </ClInclude>
+    <ClInclude Include="slovak_checkers\players\player.h">
+      <Filter>slovak_checkers\players</Filter>
+    </ClInclude>
+    <ClInclude Include="slovak_checkers\game.h">
       <Filter>slovak_checkers</Filter>
     </ClInclude>
-    <ClInclude Include="console_player.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="slovak_checkers">
+      <UniqueIdentifier>{e047b521-c622-4a6e-a64f-03821ea8cb51}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="slovak_checkers\board">
+      <UniqueIdentifier>{51d7f6f7-77f7-4a15-8ac2-a7cd16f32904}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="slovak_checkers\board\detail">
+      <UniqueIdentifier>{29b0e9a8-88da-40ca-93ca-a425f9307396}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="slovak_checkers\players">
+      <UniqueIdentifier>{8999759b-2d95-4199-9155-dd80b7f673d2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
 </Project>
