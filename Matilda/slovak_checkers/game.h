@@ -2,19 +2,15 @@
 
 #include "players/player.h"
 #include "players/console_player.h"
+#include "players/minmax_player.h"
 #include "board/board.h"
+#include "types.h"
 
 #include <memory>
 #include <iostream>
 
 namespace sc
 {
-	enum class PlayerType
-	{
-		Human,
-		Computer,
-	};
-
 	class Game
 	{
 	public:
@@ -25,7 +21,9 @@ namespace sc
 				switch (type)
 				{
 					case PlayerType::Human:
-						return std::make_unique<ConsolePlayer>(std::cin, std::cout);
+						return std::make_unique<ConsolePlayer>();
+					case PlayerType::Computer:
+						return std::make_unique<MinMaxPlayer>(Verbose::On);
 				}
 
 				throw std::runtime_error("Unknown player type.");

@@ -10,5 +10,11 @@ namespace sc
 		virtual ~Player() { }
 
 		virtual void PerformMove(SlovakCheckersBoard& board) = 0;
+
+	protected:
+		static const BoardState& GetBoardState(const SlovakCheckersBoard& board)
+		{
+			return board.m_board;
+		}
 	};
 }

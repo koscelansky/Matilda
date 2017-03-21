@@ -3,15 +3,14 @@
 #include "player.h"
 #include "../board/board.h"
 
-#include <ostream>
-#include <istream>
+#include <iostream>
 
 namespace sc
 {
 	class ConsolePlayer : public Player
 	{
 	public:
-		ConsolePlayer(std::istream& input, std::ostream& output)
+		ConsolePlayer(std::istream& input = std::cin, std::ostream& output = std::cout)
 			: m_out(output)
 			, m_in(input) { }
 

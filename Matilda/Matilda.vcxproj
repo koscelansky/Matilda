@@ -160,7 +160,9 @@
     <ClInclude Include="slovak_checkers\board\piece.h" />
     <ClInclude Include="slovak_checkers\game.h" />
     <ClInclude Include="slovak_checkers\players\console_player.h" />
+    <ClInclude Include="slovak_checkers\players\minmax_player.h" />
     <ClInclude Include="slovak_checkers\players\player.h" />
+    <ClInclude Include="slovak_checkers\types.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

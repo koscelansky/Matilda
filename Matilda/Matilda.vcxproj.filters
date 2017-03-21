@@ -36,6 +36,12 @@
     <ClInclude Include="slovak_checkers\game.h">
       <Filter>slovak_checkers</Filter>
     </ClInclude>
+    <ClInclude Include="slovak_checkers\players\minmax_player.h">
+      <Filter>slovak_checkers\players</Filter>
+    </ClInclude>
+    <ClInclude Include="slovak_checkers\types.h">
+      <Filter>slovak_checkers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
