@@ -21,11 +21,11 @@ namespace sc
 {
 	using namespace detail;
 
-    enum class Winner
+    enum class GameResult
     {
         Undefined,
-        White,
-        Black,
+        WhiteWon,
+        BlackWon,
         Draw,
     };
 
@@ -83,13 +83,13 @@ namespace sc
 
         const Color& next_player() const { return m_player; }
 
-        void perform_move(Move move);
+        void perform_move(const Move& move);
 
         const std::vector<Move>& get_moves() const { return m_next_moves; }
 
-        bool game_ended() const { return m_winner != Winner::Undefined; }
+        bool game_ended() const { return m_result != GameResult::Undefined; }
 
-        Winner get_winner() const { return m_winner; }
+        GameResult get_result() const { return m_result; }
 
     private:
         friend class Player;
@@ -106,7 +106,7 @@ namespace sc
         BoardState m_board;
         std::vector<Move> m_next_moves;
         Color m_player = Color::White;
-        Winner m_winner = Winner::Undefined;
+        GameResult m_result = GameResult::Undefined;
     };
 
     std::ostream& operator<<(std::ostream& lhs, const SlovakCheckersBoard& board);

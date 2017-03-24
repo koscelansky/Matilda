@@ -104,7 +104,7 @@ namespace sc
         return ret_val;
     }
 
-    void SlovakCheckersBoard::perform_move(Move move)
+    void SlovakCheckersBoard::perform_move(const Move& move)
     {
         auto active_piece = m_board[move.steps().front()];
         m_board.SetPiece(move.steps().front(), Piece());
@@ -166,11 +166,11 @@ namespace sc
 
             if (white_has_pieces && black_has_pieces)
             {
-                m_winner = Winner::Draw;
+                m_result = GameResult::Draw;
             }
             else
             {
-                m_winner = black_has_pieces ? Winner::Black : Winner::White;
+                m_result = black_has_pieces ? GameResult::BlackWon : GameResult::WhiteWon;
             }
         }
     }
@@ -394,17 +394,17 @@ namespace sc
         if (board.game_ended())
         {
             lhs << "Game ended. ";
-            switch (board.m_winner)
+            switch (board.m_result)
             {
-            case Winner::Black:
+            case GameResult::BlackWon:
                 lhs << "Black";
                 break;
 
-            case Winner::White:
+            case GameResult::WhiteWon:
                 lhs << "White";
                 break;
 
-            case Winner::Draw:
+            case GameResult::Draw:
                 lhs << "Draw";
                 break;
             }

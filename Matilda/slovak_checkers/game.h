@@ -44,6 +44,8 @@ namespace sc
 		{
 			auto start = std::chrono::high_resolution_clock::now();
 
+			int i = 0;
+
 			while (!m_board.game_ended())
 			{
 				m_white->PerformMove(m_board);
@@ -52,6 +54,9 @@ namespace sc
 					break;
 
 				m_black->PerformMove(m_board);
+
+				if (++i == 15)
+					break;
 			}
 
 			std::cout << "Game ended." << std::endl;
