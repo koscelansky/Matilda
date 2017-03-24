@@ -192,9 +192,9 @@ namespace sc
         return ret_val;
     }
 
-    std::vector<std::vector<size_t>> SlovakCheckersBoard::get_captures_rec_(size_t square, Piece piece, BitBoard enemies, detail::Direction direction) const
+    std::vector<move_vector> SlovakCheckersBoard::get_captures_rec_(size_t square, Piece piece, BitBoard enemies, detail::Direction direction) const
     {
-        std::vector<std::vector<size_t>> ret_val;
+        std::vector<move_vector> ret_val;
 
         auto capture_square = square;
 
@@ -215,7 +215,7 @@ namespace sc
 
         auto landing_square = capture_square;
 
-        std::vector<std::vector<size_t>> no_more_captures;
+        std::vector<move_vector> no_more_captures;
         while (true)
         {
             landing_square = get_next_square(landing_square, direction);
@@ -268,7 +268,7 @@ namespace sc
         BitBoard active_pos = m_board.GetPieces(m_player, type);
         BitBoard enemies_pos = m_board.GetPieces(opponent(m_player));
 
-        std::vector<std::vector<size_t>> paths;
+        std::vector<move_vector> paths;
 
         for (size_t i = 0; i < SQUARES_COUNT; ++i)
         {
@@ -332,7 +332,7 @@ namespace sc
 
                     if (!m_board.IsPieceAt(next_square)) // check if empty
                     {
-                        ret_val.emplace_back(std::vector<size_t>{ i, next_square }, MoveType::SimpleMove);
+                        ret_val.emplace_back(std::initializer_list<size_t>{ i, next_square }, MoveType::SimpleMove);
                     }
                     else
                     {
