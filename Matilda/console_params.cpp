@@ -36,7 +36,8 @@ ConsoleParams::ConsoleParams(int argc, char * argv[])
 	m_desc.add_options()
 		("help,H", "print help message")
 		("white,W", po::value<sc::PlayerType>()->default_value(PlayerType::Human, "human"), "set white player")
-		("black,B", po::value<sc::PlayerType>()->default_value(PlayerType::Computer, "computer"), "set black player");
+		("black,B", po::value<sc::PlayerType>()->default_value(PlayerType::Computer, "computer"), "set black player")
+		("verbose", po::bool_switch());
 
 	po::store(po::parse_command_line(argc, argv, m_desc), m_vm);
 	po::notify(m_vm);

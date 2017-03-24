@@ -21,6 +21,8 @@ public:
 
 	sc::PlayerType GetBlackPlayer() const { return m_vm["black"].as<sc::PlayerType>(); }
 
+	sc::Verbose IsVerbose() const { return m_vm.count("verbose") > 0 ? sc::Verbose::On : sc::Verbose::Off; };
+
 	void PrintHelp(std::ostream& out) const { out << m_desc; }
 private:
 

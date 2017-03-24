@@ -16,7 +16,10 @@ int main(int argc, char* argv[])
 		return 0;
 	}
 
-	sc::Game game(cp.GetWhitePlayer(), cp.GetBlackPlayer());
+	sc::Game::Config config;
+	config.verbose = cp.IsVerbose();
+
+	sc::Game game(cp.GetWhitePlayer(), cp.GetBlackPlayer(), config);
 	game.Run();
 
 	getchar();

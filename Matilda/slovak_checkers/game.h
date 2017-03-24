@@ -8,22 +8,29 @@
 
 #include <memory>
 #include <iostream>
+#include <chrono>
 
 namespace sc
 {
 	class Game
 	{
 	public:
-		Game(PlayerType white, PlayerType black)
+		struct Config
 		{
-			auto create_player = [](PlayerType type) -> std::unique_ptr<Player>
+			Verbose verbose = Verbose::Off;
+		};
+
+		Game(PlayerType white, PlayerType black, const Config& config)
+			: m_config(config)
+		{
+			auto create_player = [this](PlayerType type) -> std::unique_ptr<Player>
 			{
 				switch (type)
 				{
 					case PlayerType::Human:
 						return std::make_unique<ConsolePlayer>();
 					case PlayerType::Computer:
-						return std::make_unique<MinMaxPlayer>(Verbose::On);
+						return std::make_unique<MinMaxPlayer>(m_config.verbose);
 				}
 
 				throw std::runtime_error("Unknown player type.");
@@ -35,6 +42,8 @@ namespace sc
 
 		void Run()
 		{
+			auto start = std::chrono::high_resolution_clock::now();
+
 			while (!m_board.game_ended())
 			{
 				m_white->PerformMove(m_board);
@@ -44,10 +53,21 @@ namespace sc
 
 				m_black->PerformMove(m_board);
 			}
+
+			std::cout << "Game ended." << std::endl;
+
+			auto duration = std::chrono::high_resolution_clock::now() - start;
+			if (m_config.verbose == Verbose::On)
+			{
+				auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(duration).count();
+
+				std::cout << "Duration: " << ms << "ms." << std::endl;
+			}
 		}
 
 	private:
 		SlovakCheckersBoard m_board;
+		Config m_config;
 
 		std::unique_ptr<Player> m_black, m_white;
 	};
