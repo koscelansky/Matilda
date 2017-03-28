@@ -55,7 +55,7 @@ namespace sc
 
 				m_black->PerformMove(m_board);
 
-				if (++i == 15)
+				if (++i == 30)
 					break;
 			}
 
@@ -71,7 +71,7 @@ namespace sc
 		}
 
 	private:
-		SlovakCheckersBoard m_board;
+		Board m_board;
 		Config m_config;
 
 		std::unique_ptr<Player> m_black, m_white;

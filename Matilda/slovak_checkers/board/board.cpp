@@ -8,13 +8,13 @@ namespace sc
 {
 	using namespace detail;
 
-    SlovakCheckersBoard::SlovakCheckersBoard()
+    Board::Board()
         : m_board(board_start)
     {
         m_next_moves = get_moves_internal_();
     }
 
-    SlovakCheckersBoard::SlovakCheckersBoard(const std::string& fen)
+    Board::Board(const std::string& fen)
         : m_board(board_empty)
     {
 		std::vector<std::string> parts;
@@ -67,7 +67,7 @@ namespace sc
 		m_next_moves = get_moves_internal_();
     }
 
-	std::string SlovakCheckersBoard::get_fen() const
+	std::string Board::get_fen() const
 	{
 		std::string ret_val;
 
@@ -104,7 +104,7 @@ namespace sc
         return ret_val;
     }
 
-    void SlovakCheckersBoard::perform_move(const Move& move)
+    void Board::perform_move(const Move& move)
     {
         auto active_piece = m_board[move.steps().front()];
         m_board.SetPiece(move.steps().front(), Piece());
@@ -175,7 +175,7 @@ namespace sc
         }
     }
 
-    std::vector<Move> SlovakCheckersBoard::get_moves_internal_() const
+    std::vector<Move> Board::get_moves_internal_() const
     {
         std::vector<Move> ret_val;
 
@@ -192,7 +192,7 @@ namespace sc
         return ret_val;
     }
 
-    std::vector<move_vector> SlovakCheckersBoard::get_captures_rec_(size_t square, Piece piece, BitBoard enemies, detail::Direction direction) const
+    std::vector<move_vector> Board::get_captures_rec_(size_t square, Piece piece, BitBoard enemies, detail::Direction direction) const
     {
         std::vector<move_vector> ret_val;
 
@@ -261,7 +261,7 @@ namespace sc
         return ret_val;
     }
 
-    std::vector<Move> SlovakCheckersBoard::get_captures_for_type(Type type) const
+    std::vector<Move> Board::get_captures_for_type(Type type) const
     {
         Piece active_piece(m_player, type);
 
@@ -300,7 +300,7 @@ namespace sc
         return ret_val;
     }
 
-    std::vector<Move> SlovakCheckersBoard::get_simple_moves_() const
+    std::vector<Move> Board::get_simple_moves_() const
     {
         BitBoard active_pos = m_board.GetPieces(m_player);
 
@@ -348,7 +348,7 @@ namespace sc
         return ret_val;
     }
 
-    std::ostream& operator<<(std::ostream& lhs, const SlovakCheckersBoard& board)
+    std::ostream& operator<<(std::ostream& lhs, const Board& board)
     {
         std::string row_separator = "|";
         for (auto i = 0u; i < detail::BOARD_SIZE; ++i)

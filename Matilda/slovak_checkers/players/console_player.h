@@ -14,7 +14,7 @@ namespace sc
 			: m_out(output)
 			, m_in(input) { }
 
-		void PerformMove(SlovakCheckersBoard& board) override
+		void PerformMove(Board& board) override
 		{
 			m_out << board;
 

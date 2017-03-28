@@ -9,10 +9,10 @@ namespace sc
 	public:
 		virtual ~Player() { }
 
-		virtual void PerformMove(SlovakCheckersBoard& board) = 0;
+		virtual void PerformMove(Board& board) = 0;
 
 	protected:
-		static const BoardState& GetBoardState(const SlovakCheckersBoard& board)
+		static const BoardState& GetBoardState(const Board& board)
 		{
 			return board.m_board;
 		}

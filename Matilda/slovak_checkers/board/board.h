@@ -72,12 +72,12 @@ namespace sc
     * (always to the higher number), black's men move 'up' (always to the lower
     * number).
     */
-    class SlovakCheckersBoard
+    class Board
     {
     public:
-        SlovakCheckersBoard();
+        Board();
 
-        SlovakCheckersBoard(const std::string& serialized);
+        Board(const std::string& serialized);
 
         std::string get_fen() const;
 
@@ -93,7 +93,7 @@ namespace sc
 
     private:
         friend class Player;
-        friend std::ostream& operator<<(std::ostream& lhs, const SlovakCheckersBoard& board);
+        friend std::ostream& operator<<(std::ostream& lhs, const Board& board);
 
         std::vector<Move> get_moves_internal_() const;
 
@@ -109,5 +109,5 @@ namespace sc
         GameResult m_result = GameResult::Undefined;
     };
 
-    std::ostream& operator<<(std::ostream& lhs, const SlovakCheckersBoard& board);
+    std::ostream& operator<<(std::ostream& lhs, const Board& board);
 }

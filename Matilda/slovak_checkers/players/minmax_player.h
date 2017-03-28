@@ -14,7 +14,7 @@ namespace sc
 			: m_verbose(verbose)
 			, m_out(output) { }
 
-		void PerformMove(SlovakCheckersBoard& board) override
+		void PerformMove(Board& board) override
 		{
 			if (m_verbose == Verbose::On)
 			{
@@ -24,7 +24,7 @@ namespace sc
 			board.perform_move(get_best_move(board));
 		}
 
-		Move get_best_move(const SlovakCheckersBoard& board) const
+		Move get_best_move(const Board& board) const
 		{
 			bool is_max_pass = board.next_player() == Color::White;
 			double best_score = is_max_pass ? BLACK_IS_WINNER : WHITE_IS_WINNER;
@@ -59,7 +59,7 @@ namespace sc
 
 		static constexpr double KING_VALUE = 5;
 
-		double evaluate_board_(const SlovakCheckersBoard& board) const
+		double evaluate_board_(const Board& board) const
 		{
 			size_t white_kings = GetBoardState(board).GetPiecesCount(Color::White, Type::King);
 			size_t black_kings = GetBoardState(board).GetPiecesCount(Color::Black, Type::King);
@@ -101,7 +101,7 @@ namespace sc
 			return piece_value;
 		}
 
-		double get_best_move_internal_(const SlovakCheckersBoard& board, int depth) const
+		double get_best_move_internal_(const Board& board, int depth) const
 		{
 			auto result = board.get_result();
 			if (result == GameResult::WhiteWon)
