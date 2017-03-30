@@ -52,6 +52,19 @@ namespace sc
                 m_piece_type.set(position, piece.type() == Type::King);
             }
 
+			void ResetPiece(size_t position)
+			{
+				m_valid_pos.set(position, false);
+			}
+
+			void Promote(size_t position)
+			{
+				assert(!m_piece_type[position] && "Cannot promote king.");
+				assert(position < 28 && position >= 4 && "Invalid position for promotion.");
+
+				m_piece_type.set(position);
+			}
+
             BitBoard GetPieces(Color color, Type type = Type::Invalid) const
             {
                 BitBoard ret_val = m_valid_pos; // somebody is there
@@ -83,6 +96,11 @@ namespace sc
             {
                 return GetPieces(color, type).count();
             }
+
+			bool HasPieces(Color color) const
+			{
+				return GetPieces(color, Type::Invalid).any();
+			}
 
             Piece operator[](size_t position) const
             {

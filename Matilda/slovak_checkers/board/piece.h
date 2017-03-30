@@ -37,14 +37,6 @@ namespace sc
 
         const Type& type() const { return m_type; }
 
-        Piece get_promoted() const
-        {
-            if (m_type == Type::King)
-                throw std::runtime_error("Kings cannot be promoted.");
-
-            return Piece(m_color, Type::King);
-        }
-
         explicit operator bool() const
         {
             return m_type != Type::Invalid;

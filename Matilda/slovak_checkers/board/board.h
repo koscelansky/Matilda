@@ -104,6 +104,8 @@ namespace sc
         std::vector<Move> get_simple_moves_() const;
 
         BoardState m_board;
+
+
         std::vector<Move> m_next_moves;
         Color m_player = Color::White;
         GameResult m_result = GameResult::Undefined;

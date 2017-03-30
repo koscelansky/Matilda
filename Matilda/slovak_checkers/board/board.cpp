@@ -106,8 +106,17 @@ namespace sc
 
     void Board::perform_move(const Move& move)
     {
+		// piece performing the move
         auto active_piece = m_board[move.steps().front()];
-        m_board.SetPiece(move.steps().front(), Piece());
+        
+		// move is not reversible if either man is moved or piece is captured 
+		bool is_irreversible = active_piece.type() == Type::Man 
+			|| move.type() == MoveType::Jump;
+
+		// piece is moved, so make origin square vacant, if the piece lands on 
+		// the same square it doesn't matter, because we add it later to the right 
+		// place
+		m_board.ResetPiece(move.steps().front());
 
         if (move.type() == MoveType::Jump)
         {
@@ -125,33 +134,37 @@ namespace sc
                     if (m_board.IsPieceAt(start))
                     {
                         assert(m_board[start].color() != m_player);
-                        m_board.SetPiece(start, Piece());
+                        m_board.ResetPiece(start);
                         break;
                     }
                 }
             }
         }
 
-        m_board.SetPiece(move.steps().back(), active_piece);
+		// put active piece at the right place 
+		auto last_square = move.steps().back();
+
+        m_board.SetPiece(last_square, active_piece);
 
         if (active_piece.type() == Type::Man)
         {
             if (active_piece.color() == Color::White)
             {
-                if (move.steps().back() >= 28)
+                if (last_square >= 28)
                 {
-                    m_board.SetPiece(move.steps().back(), m_board[move.steps().back()].get_promoted());
+                    m_board.Promote(last_square);
                 }
             }
             else
             {
                 if (move.steps().back() < 4)
                 {
-                    m_board.SetPiece(move.steps().back(), m_board[move.steps().back()].get_promoted());
+					m_board.Promote(last_square);
                 }
             }
         }
 
+		// switch players 
         m_player = opponent(m_player);
 
         // check if game doesn't ended with this move 
@@ -160,9 +173,9 @@ namespace sc
 
         if (m_next_moves.empty())
         {
-            bool white_has_pieces = m_board.GetPiecesCount(Color::White) > 0;
+            bool white_has_pieces = m_board.HasPieces(Color::White);
 
-            bool black_has_pieces = m_board.GetPiecesCount(Color::Black) > 0;
+            bool black_has_pieces = m_board.HasPieces(Color::Black);
 
             if (white_has_pieces && black_has_pieces)
             {
