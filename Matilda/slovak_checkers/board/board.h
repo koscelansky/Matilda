@@ -99,15 +99,17 @@ namespace sc
 
         std::vector<move_vector> get_captures_rec_(size_t square, Piece piece, BitBoard enemies, Direction direction) const;
 
-        std::vector<Move> get_captures_for_type(Type type) const;
+        std::vector<Move> get_captures_for_type_(Type type) const;
 
         std::vector<Move> get_simple_moves_() const;
 
-        BoardState m_board;
+		uint32_t get_state_hash_() const;
 
+        BoardState m_board;
+		Color m_player = Color::White;
+		uint32_t m_reversible_moves = 0;
 
         std::vector<Move> m_next_moves;
-        Color m_player = Color::White;
         GameResult m_result = GameResult::Undefined;
     };
 

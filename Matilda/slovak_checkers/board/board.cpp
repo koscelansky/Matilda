@@ -113,6 +113,21 @@ namespace sc
 		bool is_irreversible = active_piece.type() == Type::Man 
 			|| move.type() == MoveType::Jump;
 
+		// check if this is not 15th reversible move in series, if so, game is a draw
+		if (!is_irreversible)
+		{
+			++m_reversible_moves;
+			if (m_reversible_moves == 15)
+			{
+				m_result = GameResult::Draw;
+				return;
+			}
+		}
+		else
+		{
+			m_reversible_moves = 0;
+		}
+
 		// piece is moved, so make origin square vacant, if the piece lands on 
 		// the same square it doesn't matter, because we add it later to the right 
 		// place
@@ -167,10 +182,9 @@ namespace sc
 		// switch players 
         m_player = opponent(m_player);
 
-        // check if game doesn't ended with this move 
-
         m_next_moves = get_moves_internal_();
 
+		// check if game doesn't ended with this move 
         if (m_next_moves.empty())
         {
             bool white_has_pieces = m_board.HasPieces(Color::White);
@@ -192,11 +206,11 @@ namespace sc
     {
         std::vector<Move> ret_val;
 
-        ret_val = get_captures_for_type(Type::King);
+        ret_val = get_captures_for_type_(Type::King);
         if (!ret_val.empty())
             return ret_val;
 
-        ret_val = get_captures_for_type(Type::Man);
+        ret_val = get_captures_for_type_(Type::Man);
         if (!ret_val.empty())
             return ret_val;
 
@@ -274,7 +288,7 @@ namespace sc
         return ret_val;
     }
 
-    std::vector<Move> Board::get_captures_for_type(Type type) const
+    std::vector<Move> Board::get_captures_for_type_(Type type) const
     {
         Piece active_piece(m_player, type);
 
@@ -360,6 +374,12 @@ namespace sc
 
         return ret_val;
     }
+
+	uint32_t Board::get_state_hash_() const
+	{
+		// todo
+		return 0;
+	}
 
     std::ostream& operator<<(std::ostream& lhs, const Board& board)
     {

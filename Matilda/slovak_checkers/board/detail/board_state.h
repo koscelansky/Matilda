@@ -7,6 +7,10 @@ namespace sc
 {
     namespace detail
     {
+		// forward declaration for defining friends later
+		class BoardState;
+		template<> class std::hash<BoardState>;
+
         // tag for constructing BoardState with starting position
         struct board_start_t { };
         const constexpr board_start_t board_start;
@@ -111,6 +115,23 @@ namespace sc
             BitBoard m_valid_pos; // valid - 1, invalid - 0
             BitBoard m_player_colors; // white - 1, black - 0
             BitBoard m_piece_type; // kings - 1, men - 0
+
+			friend struct std::hash<BoardState>;
         };
     }
+}
+
+// specialize std::hash for board state
+namespace std 
+{
+	template <> struct hash<sc::detail::BoardState>
+	{
+		size_t operator()(const sc::detail::BoardState& x) const
+		{
+			using sc::detail::BitBoard;
+			std::hash<BitBoard> h;		
+
+			return h(x.m_valid_pos) ^ h(x.m_valid_pos) ^ h(x.m_valid_pos);
+		}
+	};
 }

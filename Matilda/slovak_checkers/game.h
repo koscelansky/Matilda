@@ -55,11 +55,24 @@ namespace sc
 
 				m_black->PerformMove(m_board);
 
-				if (++i == 30)
+				if (++i == 40)
 					break;
 			}
 
-			std::cout << "Game ended." << std::endl;
+			// print result 
+			std::cout << "Game ended, ";
+			switch (m_board.get_result())
+			{
+				case GameResult::BlackWon:
+					std::cout << "black won." << std::endl;
+					break;
+				case GameResult::WhiteWon:
+					std::cout << "white won." << std::endl;
+					break;
+				case GameResult::Draw:
+					std::cout << "it's a draw." << std::endl;
+					break;
+			}
 
 			auto duration = std::chrono::high_resolution_clock::now() - start;
 			if (m_config.verbose == Verbose::On)
