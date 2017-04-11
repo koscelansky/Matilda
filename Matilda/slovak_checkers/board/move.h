@@ -1,7 +1,8 @@
 #pragma once
 
-#include <boost/container/small_vector.hpp>
+#include <boost/container/static_vector.hpp>
 
+#include <stdint.h>
 #include <stdexcept>
 #include <vector>
 
@@ -13,7 +14,7 @@ namespace sc
         Jump = 'x',
     };
 
-	using move_vector = boost::container::small_vector<size_t, 2>;
+	using move_vector = boost::container::static_vector<uint8_t, 8>;
 
     class Move
     {
@@ -31,7 +32,7 @@ namespace sc
 
         const MoveType& type() const { return m_type; }
 
-        const boost::container::small_vector_base<size_t>& steps() const { return m_steps; }
+        const move_vector& steps() const { return m_steps; }
 
     private:
 		move_vector m_steps;

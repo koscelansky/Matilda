@@ -97,7 +97,7 @@ namespace sc
 
         std::vector<Move> get_moves_internal_() const;
 
-        std::vector<move_vector> get_captures_rec_(size_t square, Piece piece, BitBoard enemies, Direction direction) const;
+        std::vector<move_vector> get_captures_rec_(uint8_t square, Piece piece, BitBoard enemies, Direction direction) const;
 
         std::vector<Move> get_captures_for_type_(Type type) const;
 

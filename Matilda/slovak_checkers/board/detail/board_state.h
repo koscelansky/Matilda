@@ -3,6 +3,8 @@
 #include "common.h"
 #include "../piece.h"
 
+#include <stdint.h>
+
 namespace sc
 {
     namespace detail
@@ -33,12 +35,12 @@ namespace sc
                 , m_piece_type(0x00000000)
             {}
 
-            bool IsPieceAt(size_t position) const
+            bool IsPieceAt(uint8_t position) const
             {
                 return m_valid_pos.test(position);
             }
 
-            Piece GetPiece(size_t position) const
+            Piece GetPiece(uint8_t position) const
             {
                 if (!IsPieceAt(position))
                     return Piece();
@@ -49,19 +51,19 @@ namespace sc
                 return Piece(color, type);
             }
 
-            void SetPiece(size_t position, Piece piece)
+            void SetPiece(uint8_t position, Piece piece)
             {
                 m_valid_pos.set(position, bool(piece));
                 m_player_colors.set(position, piece.color() == Color::White);
                 m_piece_type.set(position, piece.type() == Type::King);
             }
 
-			void ResetPiece(size_t position)
+			void ResetPiece(uint8_t position)
 			{
 				m_valid_pos.set(position, false);
 			}
 
-			void Promote(size_t position)
+			void Promote(uint8_t position)
 			{
 				assert(!m_piece_type[position] && "Cannot promote king.");
 				assert(position < 28 && position >= 4 && "Invalid position for promotion.");
@@ -106,7 +108,7 @@ namespace sc
 				return GetPieces(color, Type::Invalid).any();
 			}
 
-            Piece operator[](size_t position) const
+            Piece operator[](uint8_t position) const
             {
                 return GetPiece(position);
             }

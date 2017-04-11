@@ -57,7 +57,7 @@ namespace sc
 
 
 
-		inline size_t get_next_square(size_t origin, Direction direction)
+		inline uint8_t get_next_square(uint8_t origin, Direction direction)
 		{
 			if (origin < 0 || origin > SQUARES_COUNT)
 				throw std::out_of_range("Origin out of bounds.");
@@ -69,7 +69,7 @@ namespace sc
 			{
 				case Direction::NE:
 				{
-					static const size_t lookup[] =
+					static const uint8_t lookup[] =
 					{
 						X,  X,  X,  X,
 						0,  1,  2,  3,
@@ -84,7 +84,7 @@ namespace sc
 				}
 				case Direction::SE:
 				{
-					static const size_t lookup[] =
+					static const uint8_t lookup[] =
 					{
 						5,  6,  7,  X,
 						8,  9, 10, 11,
@@ -99,7 +99,7 @@ namespace sc
 				}
 				case Direction::SW:
 				{
-					static const size_t lookup[] =
+					static const uint8_t lookup[] =
 					{
 						4,  5,  6,  7,
 						X,  8,  9, 10,
@@ -114,7 +114,7 @@ namespace sc
 				}
 				case Direction::NW:
 				{
-					static const size_t lookup[] =
+					static const uint8_t lookup[] =
 					{
 						X,  X,  X,  X,
 						X,  0,  1,  2,
@@ -132,7 +132,7 @@ namespace sc
 			}
 		}
 
-		inline Direction get_direction(size_t start, size_t end)
+		inline Direction get_direction(uint8_t start, uint8_t end)
 		{
 			for (const auto& dir : { Direction::NE, Direction::NW, Direction::SE, Direction::SW })
 			{

@@ -48,7 +48,10 @@ namespace sc
 				}
 				size_t position = std::stoul(i);
 
-				m_board.SetPiece(position - 1, Piece(player, type));
+				if (position > 32)
+					throw std::out_of_range("Position in FEN is out of range.");
+
+				m_board.SetPiece(static_cast<uint8_t>(position - 1), Piece(player, type));
 			}
 		};
 
@@ -79,7 +82,7 @@ namespace sc
 			ret_val += i == Color::White ? 'W' : 'B';
 
 			// save pieces
-			for (size_t j = 0; j < SQUARES_COUNT; ++j)
+			for (uint8_t j = 0; j < SQUARES_COUNT; ++j)
 			{
                 Piece piece_j = m_board[j];
 
@@ -219,7 +222,7 @@ namespace sc
         return ret_val;
     }
 
-    std::vector<move_vector> Board::get_captures_rec_(size_t square, Piece piece, BitBoard enemies, detail::Direction direction) const
+    std::vector<move_vector> Board::get_captures_rec_(uint8_t square, Piece piece, BitBoard enemies, detail::Direction direction) const
     {
         std::vector<move_vector> ret_val;
 
@@ -253,7 +256,7 @@ namespace sc
             if (m_board.IsPieceAt(landing_square))
                 break; // if no landing square then piece cannot jump
 
-			no_more_captures.push_back({ landing_square });
+			no_more_captures.push_back({ (uint8_t)landing_square });
 
             auto new_enemies = enemies;
             new_enemies.reset(capture_square);
@@ -297,7 +300,7 @@ namespace sc
 
         std::vector<move_vector> paths;
 
-        for (size_t i = 0; i < SQUARES_COUNT; ++i)
+        for (uint8_t i = 0; i < SQUARES_COUNT; ++i)
         {
             if (!active_pos.test(i))
                 continue;
@@ -334,7 +337,7 @@ namespace sc
         std::vector<Move> ret_val;
 
         // possible moves
-        for (size_t i = 0; i < SQUARES_COUNT; ++i)
+        for (uint8_t i = 0; i < SQUARES_COUNT; ++i)
         {
             if (!active_pos.test(i))
                 continue;
@@ -359,7 +362,7 @@ namespace sc
 
                     if (!m_board.IsPieceAt(next_square)) // check if empty
                     {
-                        ret_val.emplace_back(std::initializer_list<size_t>{ i, next_square }, MoveType::SimpleMove);
+                        ret_val.emplace_back(std::initializer_list<uint8_t>{ i, next_square }, MoveType::SimpleMove);
                     }
                     else
                     {
@@ -397,7 +400,7 @@ namespace sc
             lhs << '|';
             for (auto col = 0u; col < detail::BOARD_SIZE; ++col)
             {
-                size_t num = ((row * detail::BOARD_SIZE) + col) / 2;
+				uint8_t num = ((row * detail::BOARD_SIZE) + col) / 2;
 
                 if (!is_white)
                 {
