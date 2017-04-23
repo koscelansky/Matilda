@@ -54,9 +54,6 @@ namespace sc
 					break;
 
 				m_black->PerformMove(m_board);
-
-				if (++i == 40)
-					break;
 			}
 
 			// print result 

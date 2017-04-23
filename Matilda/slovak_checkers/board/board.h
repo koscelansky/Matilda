@@ -107,7 +107,9 @@ namespace sc
 
         BoardState m_board;
 		Color m_player = Color::White;
+
 		uint32_t m_reversible_moves = 0;
+		std::vector<uint32_t> m_previous_states;
 
         std::vector<Move> m_next_moves;
         GameResult m_result = GameResult::Undefined;

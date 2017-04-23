@@ -125,10 +125,13 @@ namespace sc
 				m_result = GameResult::Draw;
 				return;
 			}
+
+			m_previous_states.push_back(get_state_hash_());
 		}
 		else
 		{
 			m_reversible_moves = 0;
+			m_previous_states.clear();
 		}
 
 		// piece is moved, so make origin square vacant, if the piece lands on 
@@ -184,6 +187,14 @@ namespace sc
 
 		// switch players 
         m_player = opponent(m_player);
+
+		// check 3-fold repetition
+		auto state_hash = get_state_hash_();
+		if (std::count(m_previous_states.begin(), m_previous_states.end(), state_hash) >= 3)
+		{
+			m_result = GameResult::Draw;
+			return;
+		}
 
         m_next_moves = get_moves_internal_();
 
@@ -380,8 +391,7 @@ namespace sc
 
 	uint32_t Board::get_state_hash_() const
 	{
-		// todo
-		return 0;
+		return static_cast<uint32_t>(std::hash<BoardState>()(m_board) ^ std::hash<Color>()(m_player));
 	}
 
     std::ostream& operator<<(std::ostream& lhs, const Board& board)

@@ -37,6 +37,24 @@ namespace sc
 				new_board.perform_move(i);
 
 				auto score = get_best_move_internal_(new_board, 6);
+
+				if (m_verbose == Verbose::On)
+				{
+					m_out << i << " ";
+					if (score == WHITE_IS_WINNER)
+					{
+						m_out << "White wins." << std::endl;
+					}
+					else if (score == BLACK_IS_WINNER)
+					{
+						m_out << "Black wins." << std::endl;
+					}
+					else
+					{
+						m_out << std::fixed << std::setprecision(5) << score << std::endl;
+					}
+				}
+
 				if (is_max_pass && score > best_score)
 				{
 					best_score = score;
@@ -65,7 +83,7 @@ namespace sc
 			size_t black_kings = GetBoardState(board).GetPiecesCount(Color::Black, Type::King);
 
 			auto piece_value = white_kings * KING_VALUE;
-			piece_value -= black_kings * 5;
+			piece_value -= black_kings * KING_VALUE;
 
 			// form white perspectives
 			static const double pawn_weight[] =
