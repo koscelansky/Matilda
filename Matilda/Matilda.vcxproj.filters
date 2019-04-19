@@ -44,9 +44,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
     <Filter Include="slovak_checkers">
       <UniqueIdentifier>{e047b521-c622-4a6e-a64f-03821ea8cb51}</UniqueIdentifier>
     </Filter>
