@@ -13,7 +13,7 @@ class ConsoleParams
 public:
 	ConsoleParams(int argc, char* argv[]);
 
-	bool IsHelpPrintEnabled() const { return m_vm.count("help") > 0; }
+	bool IsHelpPrintEnabled() const { return m_vm["help"].as<bool>(); }
 
 	bool HasFen() const { return m_vm.count("fen") > 0; }
 

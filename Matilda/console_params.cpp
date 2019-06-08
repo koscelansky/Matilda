@@ -10,7 +10,7 @@ ConsoleParams::ConsoleParams(int argc, char * argv[])
 	p.add("fen", 1);
 
 	m_desc.add_options()
-		("help,H", "print help message")
+		("help,H", po::bool_switch(), "print help message")
 		("fen", po::value<std::string>(), "game state in FEN format");
 
 	po::store(po::command_line_parser(argc, argv).options(m_desc).positional(p).run(), m_vm);
