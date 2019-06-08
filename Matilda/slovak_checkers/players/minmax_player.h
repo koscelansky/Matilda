@@ -5,7 +5,7 @@
 
 #include <iostream>
 
-namespace sc
+namespace SlovakCheckers
 {
 	class MinMaxPlayer : public Player
 	{

@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="pch.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="..\Matilda\console_params.cpp">
+      <Filter>Matilda</Filter>
+    </ClCompile>
+    <ClCompile Include="Tests\ConsoleParametersTests.cpp">
+      <Filter>Tests</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="pch.h" />
+    <ClInclude Include="..\Matilda\console_params.h">
+      <Filter>Matilda</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Matilda">
+      <UniqueIdentifier>{d1ecb62b-25be-47d4-9339-1e457b25d4f6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Tests">
+      <UniqueIdentifier>{32f67a20-a886-4941-911e-61d3dc9fcf14}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

@@ -1,10 +1,9 @@
 #include <iostream>
 
-#include "slovak_checkers/game.h"
 #include "console_params.h"
+#include "slovak_checkers/board/board.h"
 
 #include <stdlib.h>
-
 
 int main(int argc, char* argv[])
 {
@@ -16,13 +15,8 @@ int main(int argc, char* argv[])
 		return 0;
 	}
 
-	sc::Game::Config config;
-	config.verbose = cp.IsVerbose();
-
-	sc::Game game(cp.GetWhitePlayer(), cp.GetBlackPlayer(), config);
-	game.Run();
-
-	getchar();
+	SlovakCheckers::Board game(cp.GetFen());
+	std::cout << game << std::endl;
 
 	return 0; 
 }

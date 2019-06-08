@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.572
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Matilda", "Matilda\Matilda.vcxproj", "{72B3CAEF-40DB-4D0E-B1B3-D5BE2702D504}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Tests", "Tests\Tests.vcxproj", "{5A6E64B8-DC2E-4B7C-91E4-BFED4FA00068}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,8 +23,19 @@ Global
 		{72B3CAEF-40DB-4D0E-B1B3-D5BE2702D504}.Release|x64.Build.0 = Release|x64
 		{72B3CAEF-40DB-4D0E-B1B3-D5BE2702D504}.Release|x86.ActiveCfg = Release|Win32
 		{72B3CAEF-40DB-4D0E-B1B3-D5BE2702D504}.Release|x86.Build.0 = Release|Win32
+		{5A6E64B8-DC2E-4B7C-91E4-BFED4FA00068}.Debug|x64.ActiveCfg = Debug|x64
+		{5A6E64B8-DC2E-4B7C-91E4-BFED4FA00068}.Debug|x64.Build.0 = Debug|x64
+		{5A6E64B8-DC2E-4B7C-91E4-BFED4FA00068}.Debug|x86.ActiveCfg = Debug|Win32
+		{5A6E64B8-DC2E-4B7C-91E4-BFED4FA00068}.Debug|x86.Build.0 = Debug|Win32
+		{5A6E64B8-DC2E-4B7C-91E4-BFED4FA00068}.Release|x64.ActiveCfg = Release|x64
+		{5A6E64B8-DC2E-4B7C-91E4-BFED4FA00068}.Release|x64.Build.0 = Release|x64
+		{5A6E64B8-DC2E-4B7C-91E4-BFED4FA00068}.Release|x86.ActiveCfg = Release|Win32
+		{5A6E64B8-DC2E-4B7C-91E4-BFED4FA00068}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {2F3C5CAF-6F35-488D-9FE2-13998E1B7E6C}
 	EndGlobalSection
 EndGlobal

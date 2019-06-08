@@ -8,7 +8,7 @@
 #include "common.h"
 #include "../piece.h"
 
-namespace sc
+namespace SlovakCheckers
 {
 	namespace detail
 	{

@@ -4,8 +4,9 @@
 #include "../piece.h"
 
 #include <stdint.h>
+#include <optional>
 
-namespace sc
+namespace SlovakCheckers
 {
     namespace detail
     {
@@ -40,22 +41,45 @@ namespace sc
                 return m_valid_pos.test(position);
             }
 
-            Piece GetPiece(uint8_t position) const
+            std::optional<Piece> GetPiece(uint8_t position) const
             {
-                if (!IsPieceAt(position))
-                    return Piece();
+				if (!IsPieceAt(position))
+					return std::nullopt;
 
-                auto color = m_player_colors.test(position) ? Color::White : Color::Black;
-                auto type = m_piece_type.test(position) ? Type::King : Type::Man;
-
-                return Piece(color, type);
+				return (*this)[position];
             }
 
-            void SetPiece(uint8_t position, Piece piece)
+			bool IsAt(uint8_t position, Color color) const
+			{
+				return m_valid_pos.test(position) 
+					&& m_player_colors[position] == static_cast<bool>(color);
+			}
+
+			bool IsAt(uint8_t position, Type type) const
+			{
+				return m_valid_pos.test(position)
+					&& m_piece_type[position] == static_cast<bool>(type);
+			}
+
+			bool IsAt(uint8_t position, Color color, Type type) const
+			{
+				return m_valid_pos.test(position)
+					&& m_player_colors[position] == static_cast<bool>(color)
+					&& m_piece_type[position] == static_cast<bool>(type);
+			}
+
+            void SetPiece(uint8_t position, std::optional<Piece> piece)
             {
-                m_valid_pos.set(position, bool(piece));
-                m_player_colors.set(position, piece.color() == Color::White);
-                m_piece_type.set(position, piece.type() == Type::King);
+				if (piece)
+				{
+					m_valid_pos.set(position, true);
+					m_player_colors.set(position, piece->color() == Color::White);
+					m_piece_type.set(position, piece->type() == Type::King);
+				}
+				else
+				{
+					ResetPiece(position);
+				}
             }
 
 			void ResetPiece(uint8_t position)
@@ -71,46 +95,61 @@ namespace sc
 				m_piece_type.set(position);
 			}
 
-            BitBoard GetPieces(Color color, Type type = Type::Invalid) const
-            {
-                BitBoard ret_val = m_valid_pos; // somebody is there
+			BitBoard GetPieces(Color color) const
+			{
+				BitBoard result = m_valid_pos; // somebody is there
 
-                switch (color) // mask right color
-                {
-                case Color::White:
-                    ret_val &= m_player_colors;
-                    break;
-                case Color::Black:
-                    ret_val &= ~m_player_colors;
-                    break;
-                }
+				switch (color) // mask right color
+				{
+				case Color::White:
+					result &= m_player_colors;
+					break;
+				case Color::Black:
+					result &= ~m_player_colors;
+					break;
+				}
+
+				return result;
+			}
+
+            BitBoard GetPieces(Color color, Type type) const
+            {
+				BitBoard result = GetPieces(color);
 
                 switch (type) // mask right type 
                 {
                 case Type::Man:
-                    ret_val &= ~m_piece_type;
+                    result &= ~m_piece_type;
                     break;
                 case Type::King:
-                    ret_val &= m_piece_type;
+                    result &= m_piece_type;
                     break;
                 }
 
-                return ret_val;
+                return result;
             }
 
-            size_t GetPiecesCount(Color color, Type type = Type::Invalid) const
+            size_t GetPiecesCount(Color color, Type type) const
             {
                 return GetPieces(color, type).count();
             }
 
 			bool HasPieces(Color color) const
 			{
-				return GetPieces(color, Type::Invalid).any();
+				return GetPieces(color).any();
 			}
 
+			// this function assume, that there is indeed a piece on position
+			// if not, then you will receive black man, and that is probably 
+			// wrong and you should not do it
             Piece operator[](uint8_t position) const
             {
-                return GetPiece(position);
+				assert(IsPieceAt(position));
+
+				auto color = m_player_colors.test(position) ? Color::White : Color::Black;
+				auto type = m_piece_type.test(position) ? Type::King : Type::Man;
+
+				return Piece(color, type);
             }
 
         private:
@@ -126,11 +165,11 @@ namespace sc
 // specialize std::hash for board state
 namespace std 
 {
-	template <> struct hash<sc::detail::BoardState>
+	template <> struct hash<SlovakCheckers::detail::BoardState>
 	{
-		size_t operator()(const sc::detail::BoardState& x) const
+		size_t operator()(const SlovakCheckers::detail::BoardState& x) const
 		{
-			using sc::detail::BitBoard;
+			using SlovakCheckers::detail::BitBoard;
 			std::hash<BitBoard> h;		
 
 			return h(x.m_valid_pos) ^ h(x.m_valid_pos) ^ h(x.m_valid_pos);

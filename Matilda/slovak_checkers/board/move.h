@@ -1,25 +1,40 @@
 #pragma once
 
 #include <boost/container/static_vector.hpp>
+#include <boost/algorithm/string.hpp>
+#include <boost/range/adaptor/transformed.hpp>
 
 #include <stdint.h>
 #include <stdexcept>
 #include <vector>
 
-namespace sc
+namespace SlovakCheckers
 {
-    enum class MoveType
+    enum class MoveType : int8_t
     {
-        SimpleMove = '-',
-        Jump = 'x',
+        SimpleMove = 0,
+        Jump = 1,
     };
 
-	using move_vector = boost::container::static_vector<uint8_t, 8>;
+	namespace detail
+	{
+		inline const char* MoveTypeToSeparator(MoveType type)
+		{
+			switch (type)
+			{
+			case MoveType::SimpleMove: return "-";
+			case MoveType::Jump: return "x";
+			default: throw std::invalid_argument("Invalit move type.");
+			}
+		}
+	}
+
+	using MoveVector = boost::container::static_vector<uint8_t, 8>;
 
     class Move
     {
     public:
-        Move(move_vector steps, MoveType type)
+        Move(MoveVector steps, MoveType type)
             : m_steps(std::move(steps))
             , m_type(type)
         {
@@ -30,29 +45,19 @@ namespace sc
                 throw std::invalid_argument("SimpleMove can only have two steps.");
         }
 
-        const MoveType& type() const { return m_type; }
+        MoveType type() const { return m_type; }
 
-        const move_vector& steps() const { return m_steps; }
+        const MoveVector& steps() const { return m_steps; }
 
     private:
-		move_vector m_steps;
+		MoveVector m_steps;
         MoveType m_type;
     };
 
     inline std::ostream& operator<<(std::ostream& lhs, const Move& rhs)
     {
-        char move_steps_separator = static_cast<char>(rhs.type());
+		auto steps = rhs.steps() | boost::adaptors::transformed([](uint8_t x) { return std::to_string(x + 1); });
 
-        std::string ret_val;
-
-        const auto& steps = rhs.steps();
-        lhs << steps.front() + 1;
-        for (auto it = std::begin(steps) + 1; it != std::end(steps); ++it)
-        {
-            lhs << move_steps_separator;
-            lhs << *it + 1;
-        }
-
-        return lhs;
+		lhs << boost::join(steps, detail::MoveTypeToSeparator(rhs.type()));
     }
 }

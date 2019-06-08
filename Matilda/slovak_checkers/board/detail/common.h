@@ -3,7 +3,7 @@
 #include <limits>
 #include <bitset>
 
-namespace sc
+namespace SlovakCheckers
 {
     namespace detail
     {

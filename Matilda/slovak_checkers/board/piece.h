@@ -1,55 +1,57 @@
 #pragma once
 
+#include <stdint.h>
 #include <stdexcept>
 #include <ostream>
 
-namespace sc
+namespace SlovakCheckers
 {
-    enum class Color
+    enum class Color : int8_t
     {
-        Invalid = 0,
-        White = 'W',
-        Black = 'B',
+		Black = 0,
+        White = 1,
     };
 
-    enum class Type
+    enum class Type : int8_t
     {
-        Invalid = 0,
-        Man = 'M',
-        King = 'K',
+        Man = 0,
+        King = 1,
     };
+
+	namespace detail
+	{
+		inline Color GetColorFromChar(char c)
+		{
+			switch (c)
+			{
+			case 'W': return Color::White;
+			case 'B': return Color::Black;
+			default: throw std::invalid_argument("Unsupported color specified");
+			}
+		}
+	}
 
     class Piece
     {
     public:
-        Piece() = default;
-
         Piece(Color color, Type type)
             : m_color(color)
             , m_type(type)
         {
-            if ((color == Color::Invalid && type != Type::Invalid)
-                || (color != Color::Invalid && type == Type::Invalid))
-                throw std::invalid_argument("Whole piece should be either valid or not.");
         }
 
         const Color& color() const { return m_color; }
 
         const Type& type() const { return m_type; }
-
-        explicit operator bool() const
-        {
-            return m_type != Type::Invalid;
-        }
     private:
-        Color m_color = Color::Invalid;
-        Type m_type = Type::Invalid;
+        Color m_color;
+        Type m_type;
     };
 
     inline std::ostream& operator<<(std::ostream& lhs, const Piece& rhs)
     {
-        lhs << static_cast<char>(rhs.color());
-        lhs << static_cast<char>(rhs.type());
+        lhs << (rhs.color() == Color::Black ? 'B' : 'W');
+        lhs << (rhs.type() == Type::Man ? 'M' : 'K');
         return lhs;
     }
 }

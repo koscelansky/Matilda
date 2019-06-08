@@ -27,20 +27,11 @@
     <ClInclude Include="slovak_checkers\board\piece.h">
       <Filter>slovak_checkers\board</Filter>
     </ClInclude>
-    <ClInclude Include="slovak_checkers\players\console_player.h">
-      <Filter>slovak_checkers\players</Filter>
-    </ClInclude>
     <ClInclude Include="slovak_checkers\players\player.h">
       <Filter>slovak_checkers\players</Filter>
     </ClInclude>
-    <ClInclude Include="slovak_checkers\game.h">
-      <Filter>slovak_checkers</Filter>
-    </ClInclude>
     <ClInclude Include="slovak_checkers\players\minmax_player.h">
       <Filter>slovak_checkers\players</Filter>
-    </ClInclude>
-    <ClInclude Include="slovak_checkers\types.h">
-      <Filter>slovak_checkers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

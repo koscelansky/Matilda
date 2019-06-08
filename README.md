@@ -12,3 +12,8 @@ The easiest way to install those dependecies is to use
 * boost-program-options
 * boost-container
 * boost-algorithm
+* boost-range
+
+## Testing 
+
+In order to run tests *gtest* framework is required. 

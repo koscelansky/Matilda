@@ -17,10 +17,8 @@
 #include "piece.h"
 #include "move.h"
 
-namespace sc
+namespace SlovakCheckers
 {
-	using namespace detail;
-
     enum class GameResult
     {
         Undefined,
@@ -31,7 +29,7 @@ namespace sc
 
     namespace detail
     {
-        inline Color opponent(Color player)
+        inline Color Opponent(Color player)
         {
             switch (player)
             {
@@ -41,7 +39,7 @@ namespace sc
                 return Color::White;
             }
 
-            throw std::invalid_argument("Opponent exists only for valid player.");
+			throw std::runtime_error("Opponent exists only for valid player.");
         }		
     }
 
@@ -77,9 +75,9 @@ namespace sc
     public:
         Board();
 
-        Board(const std::string& serialized);
+        Board(const std::string& fen);
 
-        std::string get_fen() const;
+        std::string GetFen() const;
 
         const Color& next_player() const { return m_player; }
 
@@ -97,7 +95,7 @@ namespace sc
 
         std::vector<Move> get_moves_internal_() const;
 
-        std::vector<move_vector> get_captures_rec_(uint8_t square, Piece piece, BitBoard enemies, Direction direction) const;
+        std::vector<MoveVector> get_captures_rec_(uint8_t square, Piece piece, detail::BitBoard enemies, detail::Direction direction) const;
 
         std::vector<Move> get_captures_for_type_(Type type) const;
 
@@ -105,7 +103,7 @@ namespace sc
 
 		uint32_t get_state_hash_() const;
 
-        BoardState m_board;
+        detail::BoardState m_board;
 		Color m_player = Color::White;
 
 		uint32_t m_reversible_moves = 0;

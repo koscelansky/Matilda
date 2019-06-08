@@ -2,7 +2,7 @@
 
 #include "../board/board.h"
 
-namespace sc
+namespace SlovakCheckers
 {
 	class Player
 	{

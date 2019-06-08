@@ -4,8 +4,6 @@
 #include <boost/program_options/options_description.hpp>
 #include <boost/program_options/parsers.hpp>
 
-#include "slovak_checkers/game.h"
-
 #include <string>
 #include <ostream>
 #include <istream>
@@ -17,11 +15,9 @@ public:
 
 	bool IsHelpPrintEnabled() const { return m_vm.count("help") > 0; }
 
-	sc::PlayerType GetWhitePlayer() const { return m_vm["white"].as<sc::PlayerType>(); }
+	bool HasFen() const { return m_vm.count("fen") > 0; }
 
-	sc::PlayerType GetBlackPlayer() const { return m_vm["black"].as<sc::PlayerType>(); }
-
-	sc::Verbose IsVerbose() const { return m_vm.count("verbose") > 0 ? sc::Verbose::On : sc::Verbose::Off; };
+	std::string GetFen() const { return m_vm["fen"].as<std::string>(); }
 
 	void PrintHelp(std::ostream& out) const { out << m_desc; }
 private:

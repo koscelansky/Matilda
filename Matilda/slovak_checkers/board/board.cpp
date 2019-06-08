@@ -4,7 +4,7 @@
 
 #include "board.h"
 
-namespace sc
+namespace SlovakCheckers
 {
 	using namespace detail;
 
@@ -27,13 +27,13 @@ namespace sc
 			throw std::invalid_argument("Missing current player color in FEN string.");
 
         // we can already set next player
-        m_player = static_cast<Color>(parts[0][0]);
+		m_player = detail::GetColorFromChar(parts[0][0]);
 		parts.erase(parts.begin());
 
-		auto fill_pieces = [this](Color player, std::string position_str)
+		auto fillPieces = [this](Color player, std::string positionStr)
 		{
 			std::vector<std::string> positions;
-			boost::split(positions, position_str, boost::is_any_of(","), boost::token_compress_off); 
+			boost::split(positions, positionStr, boost::is_any_of(","), boost::token_compress_off); 
 
 			for (auto& i : positions)
 			{
@@ -57,67 +57,66 @@ namespace sc
 
 		for (auto& i : parts)
 		{
-			if (i[0] == 'W')
-			{
-				fill_pieces(Color::White, i.substr(1));
-			}
-			else
-			{
-				fill_pieces(Color::Black, i.substr(1));
-			}
+			if (i.empty())
+				throw std::invalid_argument("Invalid FEN format, player pieces cannot be empty");
+
+			Color current = detail::GetColorFromChar(i[0]);
+			i.erase(i.begin());
+
+			fillPieces(current, i);
 		}
 
 		m_next_moves = get_moves_internal_();
     }
 
-	std::string Board::get_fen() const
+	std::string Board::GetFen() const
 	{
-		std::string ret_val;
+		std::string result;
 
-		ret_val += m_player == Color::White ? 'W' : 'B';
+		result += m_player == Color::White ? 'W' : 'B';
 
-		for (const auto& i : { Color::White, Color::Black })
+		for (const auto& color : { Color::White, Color::Black })
 		{
-			ret_val += ':';
-			ret_val += i == Color::White ? 'W' : 'B';
+			result += ':';
+			result += color == Color::White ? 'W' : 'B';
 
 			// save pieces
 			for (uint8_t j = 0; j < SQUARES_COUNT; ++j)
 			{
-                Piece piece_j = m_board[j];
+				if (!m_board.IsAt(j, color))
+					continue;
 
-				if (piece_j.color() == i)
+                auto piece = m_board[j];
+
+				if (piece.type() == Type::King)
 				{
-					if (piece_j.type() == Type::King)
-					{
-						ret_val += 'K';
-					}
-
-					ret_val += std::to_string(j + 1);
-					ret_val += ',';
+					result += 'K';
 				}
+
+				result += std::to_string(j + 1);
+				result += ',';
 			}
 
-			if (!ret_val.empty())
+			if (!result.empty())
 			{
-				ret_val.pop_back();
+				result.pop_back();
 			}
 		}
 
-        return ret_val;
+        return result;
     }
 
     void Board::perform_move(const Move& move)
     {
 		// piece performing the move
-        auto active_piece = m_board[move.steps().front()];
-        
+        auto activePiece = m_board[move.steps().front()];
+
 		// move is not reversible if either man is moved or piece is captured 
-		bool is_irreversible = active_piece.type() == Type::Man 
+		bool isIrreversible = activePiece.type() == Type::Man 
 			|| move.type() == MoveType::Jump;
 
 		// check if this is not 15th reversible move in series, if so, game is a draw
-		if (!is_irreversible)
+		if (!isIrreversible)
 		{
 			++m_reversible_moves;
 			if (m_reversible_moves == 15)
@@ -165,11 +164,11 @@ namespace sc
 		// put active piece at the right place 
 		auto last_square = move.steps().back();
 
-        m_board.SetPiece(last_square, active_piece);
+        m_board.SetPiece(last_square, activePiece);
 
-        if (active_piece.type() == Type::Man)
+        if (activePiece.type() == Type::Man)
         {
-            if (active_piece.color() == Color::White)
+            if (activePiece.color() == Color::White)
             {
                 if (last_square >= 28)
                 {
@@ -186,7 +185,7 @@ namespace sc
         }
 
 		// switch players 
-        m_player = opponent(m_player);
+        m_player = Opponent(m_player);
 
 		// check 3-fold repetition
 		auto state_hash = get_state_hash_();
@@ -233,9 +232,9 @@ namespace sc
         return ret_val;
     }
 
-    std::vector<move_vector> Board::get_captures_rec_(uint8_t square, Piece piece, BitBoard enemies, detail::Direction direction) const
+    std::vector<MoveVector> Board::get_captures_rec_(uint8_t square, Piece piece, BitBoard enemies, detail::Direction direction) const
     {
-        std::vector<move_vector> ret_val;
+        std::vector<MoveVector> ret_val;
 
         auto capture_square = square;
 
@@ -243,7 +242,7 @@ namespace sc
         {
             capture_square = get_next_square(capture_square, direction);
 
-            if (capture_square == INVALID_POS || m_board[capture_square].color() == piece.color())
+            if (capture_square == INVALID_POS || m_board.IsAt(capture_square, piece.color()))
                 return ret_val;
 
 			// if there is enemy
@@ -256,7 +255,7 @@ namespace sc
 
         auto landing_square = capture_square;
 
-        std::vector<move_vector> no_more_captures;
+        std::vector<MoveVector> no_more_captures;
         while (true)
         {
             landing_square = get_next_square(landing_square, direction);
@@ -307,9 +306,9 @@ namespace sc
         Piece active_piece(m_player, type);
 
         BitBoard active_pos = m_board.GetPieces(m_player, type);
-        BitBoard enemies_pos = m_board.GetPieces(opponent(m_player));
+        BitBoard enemies_pos = m_board.GetPieces(Opponent(m_player));
 
-        std::vector<move_vector> paths;
+        std::vector<MoveVector> paths;
 
         for (uint8_t i = 0; i < SQUARES_COUNT; ++i)
         {
@@ -343,14 +342,12 @@ namespace sc
 
     std::vector<Move> Board::get_simple_moves_() const
     {
-        BitBoard active_pos = m_board.GetPieces(m_player);
-
         std::vector<Move> ret_val;
 
         // possible moves
         for (uint8_t i = 0; i < SQUARES_COUNT; ++i)
         {
-            if (!active_pos.test(i))
+            if (!m_board.IsAt(i, m_player))
                 continue;
 
             Piece active_piece = m_board[i];
@@ -396,25 +393,25 @@ namespace sc
 
     std::ostream& operator<<(std::ostream& lhs, const Board& board)
     {
-        std::string row_separator = "|";
+        std::string rowSeparator = "|";
         for (auto i = 0u; i < detail::BOARD_SIZE; ++i)
         {
-            row_separator += "----|";
+            rowSeparator += "----|";
         }
 
-        bool is_white = true;
+        bool isWhite = true;
         for (auto row = 0u; row < detail::BOARD_SIZE; ++row)
         {
-            lhs << row_separator << '\n';
+            lhs << rowSeparator << '\n';
 
             lhs << '|';
             for (auto col = 0u; col < detail::BOARD_SIZE; ++col)
             {
 				uint8_t num = ((row * detail::BOARD_SIZE) + col) / 2;
 
-                if (!is_white)
+                if (!isWhite)
                 {
-                    if (board.m_board[num])
+                    if (board.m_board.IsPieceAt(num))
                     {
                         lhs << " " << board.m_board[num] << " |";
                     }
@@ -428,14 +425,14 @@ namespace sc
                     lhs << "    |";
                 }
 
-                is_white = !is_white;
+                isWhite = !isWhite;
             }
 
-            is_white = !is_white;
+            isWhite = !isWhite;
             lhs << '\n';
         }
 
-        lhs << row_separator << "\n\n";
+        lhs << rowSeparator << "\n\n";
 
         if (board.game_ended())
         {
