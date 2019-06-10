@@ -8,6 +8,9 @@
     <ClCompile Include="Tests\ConsoleParametersTests.cpp">
       <Filter>Tests</Filter>
     </ClCompile>
+    <ClCompile Include="Tests\BoardPieceTests.cpp">
+      <Filter>Tests</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Matilda\console_params.h">
