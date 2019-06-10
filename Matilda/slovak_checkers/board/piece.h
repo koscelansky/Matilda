@@ -40,9 +40,9 @@ namespace SlovakCheckers
         {
         }
 
-        const Color& color() const { return m_color; }
+        const Color& GetColor() const { return m_color; }
 
-        const Type& type() const { return m_type; }
+        const Type& GetType() const { return m_type; }
     private:
         Color m_color;
         Type m_type;
@@ -50,8 +50,8 @@ namespace SlovakCheckers
 
     inline std::ostream& operator<<(std::ostream& lhs, const Piece& rhs)
     {
-        lhs << (rhs.color() == Color::Black ? 'B' : 'W');
-        lhs << (rhs.type() == Type::Man ? 'M' : 'K');
+        lhs << (rhs.GetColor() == Color::Black ? 'B' : 'W');
+        lhs << (rhs.GetType() == Type::Man ? 'M' : 'K');
         return lhs;
     }
 }

@@ -45,9 +45,9 @@ namespace SlovakCheckers
                 throw std::invalid_argument("SimpleMove can only have two steps.");
         }
 
-        MoveType type() const { return m_type; }
+        MoveType GetType() const { return m_type; }
 
-        const MoveVector& steps() const { return m_steps; }
+        const MoveVector& GetSteps() const { return m_steps; }
 
     private:
 		MoveVector m_steps;
@@ -56,8 +56,8 @@ namespace SlovakCheckers
 
     inline std::ostream& operator<<(std::ostream& lhs, const Move& rhs)
     {
-		auto steps = rhs.steps() | boost::adaptors::transformed([](uint8_t x) { return std::to_string(x + 1); });
+		auto steps = rhs.GetSteps() | boost::adaptors::transformed([](uint8_t x) { return std::to_string(x + 1); });
 
-		lhs << boost::join(steps, detail::MoveTypeToSeparator(rhs.type()));
+		lhs << boost::join(steps, detail::MoveTypeToSeparator(rhs.GetType()));
     }
 }

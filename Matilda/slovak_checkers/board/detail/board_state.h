@@ -73,8 +73,8 @@ namespace SlovakCheckers
 				if (piece)
 				{
 					m_valid_pos.set(position, true);
-					m_player_colors.set(position, piece->color() == Color::White);
-					m_piece_type.set(position, piece->type() == Type::King);
+					m_player_colors.set(position, piece->GetColor() == Color::White);
+					m_piece_type.set(position, piece->GetType() == Type::King);
 				}
 				else
 				{

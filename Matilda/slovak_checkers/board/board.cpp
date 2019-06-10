@@ -88,7 +88,7 @@ namespace SlovakCheckers
 
                 auto piece = m_board[j];
 
-				if (piece.type() == Type::King)
+				if (piece.GetType() == Type::King)
 				{
 					result += 'K';
 				}
@@ -109,11 +109,11 @@ namespace SlovakCheckers
     void Board::perform_move(const Move& move)
     {
 		// piece performing the move
-        auto activePiece = m_board[move.steps().front()];
+        auto activePiece = m_board[move.GetSteps().front()];
 
 		// move is not reversible if either man is moved or piece is captured 
-		bool isIrreversible = activePiece.type() == Type::Man 
-			|| move.type() == MoveType::Jump;
+		bool isIrreversible = activePiece.GetType() == Type::Man
+			|| move.GetType() == MoveType::Jump;
 
 		// check if this is not 15th reversible move in series, if so, game is a draw
 		if (!isIrreversible)
@@ -136,14 +136,14 @@ namespace SlovakCheckers
 		// piece is moved, so make origin square vacant, if the piece lands on 
 		// the same square it doesn't matter, because we add it later to the right 
 		// place
-		m_board.ResetPiece(move.steps().front());
+		m_board.ResetPiece(move.GetSteps().front());
 
-        if (move.type() == MoveType::Jump)
+        if (move.GetType() == MoveType::Jump)
         {
-            for (size_t i = 0; i < move.steps().size() - 1; ++i)
+            for (size_t i = 0; i < move.GetSteps().size() - 1; ++i)
             {
-                auto start = move.steps()[i];
-                auto end = move.steps()[i + 1];
+                auto start = move.GetSteps()[i];
+                auto end = move.GetSteps()[i + 1];
 
                 auto dir = get_direction(start, end);
 
@@ -153,7 +153,7 @@ namespace SlovakCheckers
 
                     if (m_board.IsPieceAt(start))
                     {
-                        assert(m_board[start].color() != m_player);
+                        assert(m_board[start].GetColor() != m_player);
                         m_board.ResetPiece(start);
                         break;
                     }
@@ -162,13 +162,13 @@ namespace SlovakCheckers
         }
 
 		// put active piece at the right place 
-		auto last_square = move.steps().back();
+		auto last_square = move.GetSteps().back();
 
         m_board.SetPiece(last_square, activePiece);
 
-        if (activePiece.type() == Type::Man)
+        if (activePiece.GetType() == Type::Man)
         {
-            if (activePiece.color() == Color::White)
+            if (activePiece.GetColor() == Color::White)
             {
                 if (last_square >= 28)
                 {
@@ -177,7 +177,7 @@ namespace SlovakCheckers
             }
             else
             {
-                if (move.steps().back() < 4)
+                if (move.GetSteps().back() < 4)
                 {
 					m_board.Promote(last_square);
                 }
@@ -242,14 +242,14 @@ namespace SlovakCheckers
         {
             capture_square = get_next_square(capture_square, direction);
 
-            if (capture_square == INVALID_POS || m_board.IsAt(capture_square, piece.color()))
+            if (capture_square == INVALID_POS || m_board.IsAt(capture_square, piece.GetColor()))
                 return ret_val;
 
 			// if there is enemy
             if (enemies.test(capture_square)) 
                 break;
 
-            if (piece.type() == Type::Man)
+            if (piece.GetType() == Type::Man)
                 return ret_val;
         }
 
@@ -289,7 +289,7 @@ namespace SlovakCheckers
                 }
             }
 
-            if (piece.type() == Type::Man)
+            if (piece.GetType() == Type::Man)
                 break;
         }
 
@@ -377,7 +377,7 @@ namespace SlovakCheckers
                         break;
                     }
 
-                    if (active_piece.type() == Type::Man)
+                    if (active_piece.GetType() == Type::Man)
                         break;
                 }
             }

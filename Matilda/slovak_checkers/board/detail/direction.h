@@ -157,9 +157,9 @@ namespace SlovakCheckers
 		*/
 		inline Directions get_directions_for_piece(Piece piece)
 		{
-			if (piece.type() == Type::King)
+			if (piece.GetType() == Type::King)
 				return ALL_DIRECTIONS;
-			else if (piece.color() == Color::Black)
+			else if (piece.GetColor() == Color::Black)
 				return ALL_NORTH;
 			else
 				return ALL_SOUTH;
