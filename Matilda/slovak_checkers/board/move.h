@@ -24,7 +24,7 @@ namespace SlovakCheckers
 			{
 			case MoveType::SimpleMove: return "-";
 			case MoveType::Jump: return "x";
-			default: throw std::invalid_argument("Invalit move type.");
+			default: throw std::invalid_argument("Invalid move type.");
 			}
 		}
 	}
@@ -58,6 +58,6 @@ namespace SlovakCheckers
     {
 		auto steps = rhs.GetSteps() | boost::adaptors::transformed([](uint8_t x) { return std::to_string(x + 1); });
 
-		lhs << boost::join(steps, detail::MoveTypeToSeparator(rhs.GetType()));
+		return lhs << boost::join(steps, detail::MoveTypeToSeparator(rhs.GetType()));
     }
 }
