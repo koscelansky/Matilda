@@ -31,14 +31,14 @@ namespace SlovakCheckers
             BoardState(board_empty_t) { }
 
             BoardState(board_start_t)
-                : m_valid_pos(0xff0000ff)
+                : m_validPos(0xff0000ff)
                 , m_player_colors(0x000000ff)
                 , m_piece_type(0x00000000)
             {}
 
             bool IsPieceAt(uint8_t position) const
             {
-                return m_valid_pos.test(position);
+                return m_validPos.test(position);
             }
 
             std::optional<Piece> GetPiece(uint8_t position) const
@@ -51,19 +51,19 @@ namespace SlovakCheckers
 
 			bool IsAt(uint8_t position, Color color) const
 			{
-				return m_valid_pos.test(position) 
+				return m_validPos.test(position) 
 					&& m_player_colors[position] == static_cast<bool>(color);
 			}
 
 			bool IsAt(uint8_t position, Type type) const
 			{
-				return m_valid_pos.test(position)
+				return m_validPos.test(position)
 					&& m_piece_type[position] == static_cast<bool>(type);
 			}
 
 			bool IsAt(uint8_t position, Color color, Type type) const
 			{
-				return m_valid_pos.test(position)
+				return m_validPos.test(position)
 					&& m_player_colors[position] == static_cast<bool>(color)
 					&& m_piece_type[position] == static_cast<bool>(type);
 			}
@@ -72,7 +72,7 @@ namespace SlovakCheckers
             {
 				if (piece)
 				{
-					m_valid_pos.set(position, true);
+					m_validPos.set(position, true);
 					m_player_colors.set(position, piece->GetColor() == Color::White);
 					m_piece_type.set(position, piece->GetType() == Type::King);
 				}
@@ -84,7 +84,7 @@ namespace SlovakCheckers
 
 			void ResetPiece(uint8_t position)
 			{
-				m_valid_pos.set(position, false);
+				m_validPos.set(position, false);
 			}
 
 			void Promote(uint8_t position)
@@ -97,7 +97,7 @@ namespace SlovakCheckers
 
 			BitBoard GetPieces(Color color) const
 			{
-				BitBoard result = m_valid_pos; // somebody is there
+				BitBoard result = m_validPos; // somebody is there
 
 				switch (color) // mask right color
 				{
@@ -153,7 +153,7 @@ namespace SlovakCheckers
             }
 
         private:
-            BitBoard m_valid_pos; // valid - 1, invalid - 0
+            BitBoard m_validPos; // valid - 1, invalid - 0
             BitBoard m_player_colors; // white - 1, black - 0
             BitBoard m_piece_type; // kings - 1, men - 0
 
@@ -172,7 +172,7 @@ namespace std
 			using SlovakCheckers::detail::BitBoard;
 			std::hash<BitBoard> h;		
 
-			return h(x.m_valid_pos) ^ h(x.m_valid_pos) ^ h(x.m_valid_pos);
+			return h(x.m_validPos) ^ h(x.m_player_colors) ^ h(x.m_piece_type);
 		}
 	};
 }
