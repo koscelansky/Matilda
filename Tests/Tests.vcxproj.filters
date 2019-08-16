@@ -14,6 +14,12 @@
     <ClCompile Include="Tests\BoardMoveTests.cpp">
       <Filter>Tests</Filter>
     </ClCompile>
+    <ClCompile Include="..\Matilda\slovak_checkers\board\board.cpp">
+      <Filter>Matilda\slovak_checkers\board</Filter>
+    </ClCompile>
+    <ClCompile Include="Tests\FenTests.cpp">
+      <Filter>Tests</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Matilda\console_params.h">
@@ -26,6 +32,12 @@
     </Filter>
     <Filter Include="Tests">
       <UniqueIdentifier>{32f67a20-a886-4941-911e-61d3dc9fcf14}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Matilda\slovak_checkers">
+      <UniqueIdentifier>{6e83c185-1ad7-4fcd-a5d3-907804e38600}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Matilda\slovak_checkers\board">
+      <UniqueIdentifier>{193ecf42-ae5f-4cfa-a0a8-f142fcb9ac29}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

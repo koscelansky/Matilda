@@ -77,6 +77,12 @@ namespace SlovakCheckers
 
         Board(const std::string& fen);
 
+		/**
+		* White will alway be first in the FEN. So this one can be produced.
+		* W:W10:B18, but the followong one cannot be W:B18:W10. Also the pieces
+		* are reported in square number order, so B1,2,3 is possible, but 
+		* B2,1,3 is not. 
+		*/
         std::string GetFen() const;
 
         const Color& next_player() const { return m_player; }

@@ -1,5 +1,7 @@
 #include <type_traits>
+#include <assert.h>
 
+#include <regex> // ECMAScript grammar is far worst then PCRE :(
 #include <boost/algorithm/string.hpp>
 
 #include "board.h"
@@ -17,18 +19,22 @@ namespace SlovakCheckers
     Board::Board(const std::string& fen)
         : m_board(board_empty)
     {
-		std::vector<std::string> parts;
-		boost::split(parts, fen, boost::is_any_of(":"), boost::token_compress_off);
+		// following regex will check if the fen is correct and also extract
+		// all of the information, there is just one thing that is not properly 
+		// checked (duplicates in pieces positions. so W:W1,1:B1 is valid
+		// however it is obviously not, use https://regex101.com/ to debug :)
+		//
+		// https://regex101.com/r/gOWA7E/2
+		const char FEN_PATTERN[] = 
+R"#(^(B|W):(B|W)((?:K?(?:[1-9]|[1-2][0-9]|3[0-2]),){0,7}K?(?:[1-9]|[1-2][0-9]|3[0-2]))?:(?!\2)(B|W)((?:K?(?:[1-9]|[1-2][0-9]|3[0-2]),){0,7}K?(?:[1-9]|[1-2][0-9]|3[0-2]))?$)#";
 
-		if (parts.size() != 3)
-            throw std::invalid_argument("FEN string is in wrong format.");
+		const std::regex fenRegex(FEN_PATTERN);
+		std::smatch match;
 
-		if (parts[0].size() != 1)
-			throw std::invalid_argument("Missing current player color in FEN string.");
+		if (!std::regex_match(fen, match, fenRegex))
+			throw std::invalid_argument("FEN string is in wrong format.");
 
-        // we can already set next player
-		m_player = detail::GetColorFromChar(parts[0][0]);
-		parts.erase(parts.begin());
+		m_player = detail::GetColorFromChar(match[1].str()[0]);
 
 		auto fillPieces = [this](Color player, std::string positionStr)
 		{
@@ -37,8 +43,7 @@ namespace SlovakCheckers
 
 			for (auto& i : positions)
 			{
-				if (i.empty())
-					throw std::invalid_argument("Position in FEN is bad.");
+				assert(!i.empty());
 
 				Type type = Type::Man;
 				if (i[0] == 'K')
@@ -46,25 +51,18 @@ namespace SlovakCheckers
 					type = Type::King;
 					i.erase(i.begin());
 				}
-				size_t position = std::stoul(i);
+				uint8_t position = static_cast<uint8_t>(std::stoul(i)) - 1;
+				assert(position >= 0 && position < 32);
 
-				if (position > 32)
-					throw std::out_of_range("Position in FEN is out of range.");
+				if (m_board.IsPieceAt(position))
+					throw std::runtime_error("Duplicate positions specified.");
 
-				m_board.SetPiece(static_cast<uint8_t>(position - 1), Piece(player, type));
+				m_board.SetPiece(position, Piece(player, type));
 			}
 		};
 
-		for (auto& i : parts)
-		{
-			if (i.empty())
-				throw std::invalid_argument("Invalid FEN format, player pieces cannot be empty");
-
-			Color current = detail::GetColorFromChar(i[0]);
-			i.erase(i.begin());
-
-			fillPieces(current, i);
-		}
+		fillPieces(detail::GetColorFromChar(match[2].str()[0]), match[3].str());
+		fillPieces(detail::GetColorFromChar(match[4].str()[0]), match[5].str());
 
 		m_next_moves = get_moves_internal_();
     }
