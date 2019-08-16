@@ -21,7 +21,7 @@ TEST(BoardPiece, OperatorLeftShiftBM)
 	std::stringstream ss;
 	ss << Piece(Color::Black, Type::Man);
 
-	ASSERT_STREQ("BM", ss.str().c_str());
+	ASSERT_EQ("BM", ss.str());
 }
 
 TEST(BoardPiece, OperatorLeftShiftBK)
@@ -29,7 +29,7 @@ TEST(BoardPiece, OperatorLeftShiftBK)
 	std::stringstream ss;
 	ss << Piece(Color::Black, Type::King);
 
-	ASSERT_STREQ("BK", ss.str().c_str());
+	ASSERT_EQ("BK", ss.str());
 }
 
 TEST(BoardPiece, OperatorLeftShiftWM)
@@ -37,7 +37,7 @@ TEST(BoardPiece, OperatorLeftShiftWM)
 	std::stringstream ss;
 	ss << Piece(Color::White, Type::Man);
 
-	ASSERT_STREQ("WM", ss.str().c_str());
+	ASSERT_EQ("WM", ss.str());
 }
 
 TEST(BoardPiece, OperatorLeftShiftWK)
@@ -45,5 +45,5 @@ TEST(BoardPiece, OperatorLeftShiftWK)
 	std::stringstream ss;
 	ss << Piece(Color::White, Type::King);
 
-	ASSERT_STREQ("WK", ss.str().c_str());
+	ASSERT_EQ("WK", ss.str());
 }

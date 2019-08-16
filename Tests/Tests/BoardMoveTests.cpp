@@ -43,7 +43,7 @@ TEST(BoardMove, MoveOperatorLeftShiftSimple)
 	std::stringstream ss;
 	ss << Move({ 0, 1 }, MoveType::SimpleMove);
 
-	ASSERT_STREQ("1-2", ss.str().c_str());
+	ASSERT_EQ("1-2", ss.str());
 }
 
 TEST(BoardMove, MoveOperatorLeftShiftJump)
@@ -51,5 +51,5 @@ TEST(BoardMove, MoveOperatorLeftShiftJump)
 	std::stringstream ss;
 	ss << Move({ 0, 1, 4 }, MoveType::Jump);
 
-	ASSERT_STREQ("1x2x5", ss.str().c_str());
+	ASSERT_EQ("1x2x5", ss.str());
 }
