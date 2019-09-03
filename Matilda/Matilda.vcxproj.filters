@@ -27,12 +27,6 @@
     <ClInclude Include="slovak_checkers\board\piece.h">
       <Filter>slovak_checkers\board</Filter>
     </ClInclude>
-    <ClInclude Include="slovak_checkers\players\player.h">
-      <Filter>slovak_checkers\players</Filter>
-    </ClInclude>
-    <ClInclude Include="slovak_checkers\players\minmax_player.h">
-      <Filter>slovak_checkers\players</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="slovak_checkers">
@@ -43,9 +37,6 @@
     </Filter>
     <Filter Include="slovak_checkers\board\detail">
       <UniqueIdentifier>{29b0e9a8-88da-40ca-93ca-a425f9307396}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="slovak_checkers\players">
-      <UniqueIdentifier>{8999759b-2d95-4199-9155-dd80b7f673d2}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

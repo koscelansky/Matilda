@@ -19,14 +19,6 @@
 
 namespace SlovakCheckers
 {
-    enum class GameResult
-    {
-        Undefined,
-        WhiteWon,
-        BlackWon,
-        Draw,
-    };
-
     namespace detail
     {
         inline Color Opponent(Color player)
@@ -73,7 +65,7 @@ namespace SlovakCheckers
     class Board
     {
     public:
-        Board();
+		Board() = default;
 
         Board(const std::string& fen);
 
@@ -85,38 +77,28 @@ namespace SlovakCheckers
 		*/
         std::string GetFen() const;
 
-        const Color& next_player() const { return m_player; }
+        Color NextTurn() const { return m_player; }
+
+		std::vector<Move> GetMoves() const { return GetMoves_(); }
 
         void perform_move(const Move& move);
 
-        const std::vector<Move>& get_moves() const { return m_next_moves; }
-
-        bool game_ended() const { return m_result != GameResult::Undefined; }
-
-        GameResult get_result() const { return m_result; }
+		size_t GetStateHash() const;
 
     private:
         friend class Player;
         friend std::ostream& operator<<(std::ostream& lhs, const Board& board);
 
-        std::vector<Move> get_moves_internal_() const;
+        std::vector<Move> GetMoves_() const;
 
-        std::vector<MoveVector> get_captures_rec_(uint8_t square, Piece piece, detail::BitBoard enemies, detail::Direction direction) const;
+        std::vector<MoveVector> GetCapturesRec_(uint8_t square, Piece piece, detail::BitBoard enemies, detail::Direction direction) const;
 
-        std::vector<Move> get_captures_for_type_(Type type) const;
+        std::vector<Move> GetCapturesForType_(Type type) const;
 
         std::vector<Move> get_simple_moves_() const;
 
-		uint32_t get_state_hash_() const;
-
-        detail::BoardState m_board;
+		detail::BoardState m_board{ detail::kBoardStart };
 		Color m_player = Color::White;
-
-		uint32_t m_reversible_moves = 0;
-		std::vector<uint32_t> m_previous_states;
-
-        std::vector<Move> m_next_moves;
-        GameResult m_result = GameResult::Undefined;
     };
 
     std::ostream& operator<<(std::ostream& lhs, const Board& board);

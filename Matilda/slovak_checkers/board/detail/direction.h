@@ -155,7 +155,7 @@ namespace SlovakCheckers
 		/**
 		* Returns all direction piece can move (in one bit mask).
 		*/
-		inline Directions get_directions_for_piece(Piece piece)
+		inline Directions GetDirectionsForPiece(Piece piece)
 		{
 			if (piece.GetType() == Type::King)
 				return ALL_DIRECTIONS;
@@ -168,7 +168,7 @@ namespace SlovakCheckers
 		/**
 		* Get opposite direction for input direction.
 		*/
-		inline Direction get_opposite_direction(Direction dir)
+		inline Direction GetOppositeDirection(Direction dir)
 		{
 			switch (dir)
 			{

@@ -180,8 +180,6 @@
     <ClInclude Include="slovak_checkers\board\detail\direction.h" />
     <ClInclude Include="slovak_checkers\board\move.h" />
     <ClInclude Include="slovak_checkers\board\piece.h" />
-    <ClInclude Include="slovak_checkers\players\minmax_player.h" />
-    <ClInclude Include="slovak_checkers\players\player.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
 </Project>

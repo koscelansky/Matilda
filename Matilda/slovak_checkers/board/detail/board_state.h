@@ -16,11 +16,11 @@ namespace SlovakCheckers
 
         // tag for constructing BoardState with starting position
         struct board_start_t { };
-        const constexpr board_start_t board_start;
+        const constexpr board_start_t kBoardStart;
 
         // tag for constructing empty BoardState 
         struct board_empty_t { };
-        const constexpr board_empty_t board_empty;
+        const constexpr board_empty_t kBoardEmpty;
 
         // represent one board position as densely as possible 
         // (OK there are maybe some redundant bits, but it will 
