@@ -96,7 +96,17 @@ R"#(^(B|W):(B|W)((?:K?(?:[1-9]|[1-2][0-9]|3[0-2]),){0,7}K?(?:[1-9]|[1-2][0-9]|3[
         return result;
     }
 
-    void Board::perform_move(const Move& move)
+	auto Board::GetMoves() const -> BoardMoves
+	{
+		return
+		{
+			GetJumpsForType(Type::King),
+			GetJumpsForType(Type::Man),
+			GetSimpleMoves(),
+		};
+	}
+
+	void Board::perform_move(const Move& move)
     {
 		// piece performing the move
         auto activePiece = m_board[move.GetSteps().front()];
@@ -156,24 +166,7 @@ R"#(^(B|W):(B|W)((?:K?(?:[1-9]|[1-2][0-9]|3[0-2]),){0,7}K?(?:[1-9]|[1-2][0-9]|3[
         m_player = Opponent(m_player);
     }
 
-    std::vector<Move> Board::GetMoves_() const
-    {
-        std::vector<Move> result;
-
-        result = GetCapturesForType_(Type::King);
-        if (!result.empty())
-            return result;
-
-        result = GetCapturesForType_(Type::Man);
-        if (!result.empty())
-            return result;
-
-        result = get_simple_moves_();
-
-        return result;
-    }
-
-    std::vector<MoveVector> Board::GetCapturesRec_(uint8_t square, Piece piece, BitBoard enemies, detail::Direction direction) const
+    std::vector<MoveVector> Board::GetJumpsRecursive(uint8_t square, Piece piece, BitBoard enemies, detail::Direction direction) const
     {
         std::vector<MoveVector> result;
 
@@ -215,18 +208,18 @@ R"#(^(B|W):(B|W)((?:K?(?:[1-9]|[1-2][0-9]|3[0-2]),){0,7}K?(?:[1-9]|[1-2][0-9]|3[
             auto newEnemies = enemies;
             newEnemies.reset(captureSquare);
 
-            Directions piece_directions = GetDirectionsForPiece(piece);
-            for (uint32_t j = 0; j < piece_directions.size(); ++j)
+            Directions pieceDirections = GetDirectionsForPiece(piece);
+            for (uint32_t j = 0; j < pieceDirections.size(); ++j)
             {
-				if (!piece_directions.test(j))
+				if (!pieceDirections.test(j))
 					continue; // direction is not set
 
-				Direction new_dir = uint32_to_dir(j);
+				Direction newDir = uint32_to_dir(j);
 
-                if (new_dir == GetOppositeDirection(direction))
+                if (newDir == GetOppositeDirection(direction))
                     continue;
 
-                for (auto&& i : GetCapturesRec_(landingSquare, piece, newEnemies, new_dir))
+                for (auto&& i : GetJumpsRecursive(landingSquare, piece, newEnemies, newDir))
                 {
                     i.insert(i.begin(), landingSquare);
                     result.push_back(std::move(i));
@@ -240,7 +233,7 @@ R"#(^(B|W):(B|W)((?:K?(?:[1-9]|[1-2][0-9]|3[0-2]),){0,7}K?(?:[1-9]|[1-2][0-9]|3[
         return result;
     }
 
-    std::vector<Move> Board::GetCapturesForType_(Type type) const
+    std::vector<Move> Board::GetJumpsForType(Type type) const
     {
         Piece activePiece(m_player, type);
 
@@ -262,7 +255,7 @@ R"#(^(B|W):(B|W)((?:K?(?:[1-9]|[1-2][0-9]|3[0-2]),){0,7}K?(?:[1-9]|[1-2][0-9]|3[
 
 				Direction dir = uint32_to_dir(j);
 
-                for (auto&& x : GetCapturesRec_(i, activePiece, enemyPositions, dir))
+                for (auto&& x : GetJumpsRecursive(i, activePiece, enemyPositions, dir))
                 {
                     x.insert(x.begin(), i);
                     paths.push_back(std::move(x));
@@ -279,7 +272,7 @@ R"#(^(B|W):(B|W)((?:K?(?:[1-9]|[1-2][0-9]|3[0-2]),){0,7}K?(?:[1-9]|[1-2][0-9]|3[
         return result;
     }
 
-    std::vector<Move> Board::get_simple_moves_() const
+    std::vector<Move> Board::GetSimpleMoves() const
     {
         std::vector<Move> ret_val;
 

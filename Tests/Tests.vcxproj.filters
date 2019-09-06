@@ -20,6 +20,9 @@
     <ClCompile Include="Tests\FenTests.cpp">
       <Filter>Tests</Filter>
     </ClCompile>
+    <ClCompile Include="Tests\BoardGetMoves.cpp">
+      <Filter>Tests</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Matilda\console_params.h">

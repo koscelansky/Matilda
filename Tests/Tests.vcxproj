@@ -35,6 +35,7 @@
     </ClCompile>
     <ClCompile Include="..\Matilda\slovak_checkers\board\board.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Tests\BoardGetMoves.cpp" />
     <ClCompile Include="Tests\BoardMoveTests.cpp" />
     <ClCompile Include="Tests\BoardPieceTests.cpp" />
     <ClCompile Include="Tests\ConsoleParametersTests.cpp" />

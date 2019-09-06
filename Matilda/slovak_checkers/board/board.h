@@ -65,6 +65,13 @@ namespace SlovakCheckers
     class Board
     {
     public:
+		struct BoardMoves
+		{
+			std::vector<Move> kingJumps;
+			std::vector<Move> manJumps;
+			std::vector<Move> simpleMoves;
+		};
+
 		Board() = default;
 
         Board(const std::string& fen);
@@ -79,7 +86,7 @@ namespace SlovakCheckers
 
         Color NextTurn() const { return m_player; }
 
-		std::vector<Move> GetMoves() const { return GetMoves_(); }
+		BoardMoves GetMoves() const;
 
         void perform_move(const Move& move);
 
@@ -89,13 +96,11 @@ namespace SlovakCheckers
         friend class Player;
         friend std::ostream& operator<<(std::ostream& lhs, const Board& board);
 
-        std::vector<Move> GetMoves_() const;
+        std::vector<MoveVector> GetJumpsRecursive(uint8_t square, Piece piece, detail::BitBoard enemies, detail::Direction direction) const;
 
-        std::vector<MoveVector> GetCapturesRec_(uint8_t square, Piece piece, detail::BitBoard enemies, detail::Direction direction) const;
+        std::vector<Move> GetJumpsForType(Type type) const;
 
-        std::vector<Move> GetCapturesForType_(Type type) const;
-
-        std::vector<Move> get_simple_moves_() const;
+        std::vector<Move> GetSimpleMoves() const;
 
 		detail::BoardState m_board{ detail::kBoardStart };
 		Color m_player = Color::White;
