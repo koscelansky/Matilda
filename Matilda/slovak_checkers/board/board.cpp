@@ -32,6 +32,9 @@ R"#(^(B|W):(B|W)((?:K?(?:[1-9]|[1-2][0-9]|3[0-2]),){0,7}K?(?:[1-9]|[1-2][0-9]|3[
 
 		auto fillPieces = [this](Color player, std::string positionStr)
 		{
+			if (positionStr.empty())
+				return;
+
 			std::vector<std::string> positions;
 			boost::split(positions, positionStr, boost::is_any_of(","), boost::token_compress_off); 
 
@@ -57,6 +60,9 @@ R"#(^(B|W):(B|W)((?:K?(?:[1-9]|[1-2][0-9]|3[0-2]),){0,7}K?(?:[1-9]|[1-2][0-9]|3[
 
 		fillPieces(detail::GetColorFromChar(match[2].str()[0]), match[3].str());
 		fillPieces(detail::GetColorFromChar(match[4].str()[0]), match[5].str());
+
+		if (m_board == BoardState(kBoardEmpty))
+			throw std::runtime_error("Empty board is not allowd from FEN.");
     }
 
 	std::string Board::GetFen() const

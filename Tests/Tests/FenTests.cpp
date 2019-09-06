@@ -21,6 +21,15 @@ TEST(Fen, InvalidString)
 	EXPECT_ANY_THROW(Board("B:WK0:B"));
 }
 
+TEST(Fen, Empty)
+{
+	EXPECT_ANY_THROW(Board("B:B:W"));
+	EXPECT_ANY_THROW(Board("B:W:B"));
+	EXPECT_ANY_THROW(Board("W:W:B"));
+	EXPECT_ANY_THROW(Board("W:B:W"));
+	EXPECT_ANY_THROW(Board("B:B:B"));
+}
+
 TEST(Fen, SetAndGet)
 {
 	std::string fen = "W:W1,2,3,4,5,6,7,8:B25,26,27,28,29,30,31,32";

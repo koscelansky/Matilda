@@ -158,7 +158,15 @@ namespace SlovakCheckers
             BitBoard m_piece_type; // kings - 1, men - 0
 
 			friend struct std::hash<BoardState>;
+			friend bool operator==(const BoardState& lhs, const BoardState& rhs);
         };
+
+		inline bool operator==(const BoardState& lhs, const BoardState& rhs)
+		{
+			return lhs.m_piece_type == rhs.m_piece_type
+				&& lhs.m_player_colors == rhs.m_player_colors
+				&& lhs.m_validPos == rhs.m_validPos;
+		}
     }
 }
 
