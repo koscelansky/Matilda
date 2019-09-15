@@ -4,6 +4,8 @@
 
 #include <sstream>
 #include <algorithm>
+#include <utility>
+#include <string_view>
 
 using namespace SlovakCheckers;
 
@@ -29,7 +31,7 @@ void AssertMovesEq(std::vector<std::string> expected, Board::BoardMoves actual)
 	}
 	std::sort(std::begin(actualStr), std::end(actualStr));
 
-	ASSERT_EQ(expected, actualStr);
+	EXPECT_EQ(expected, actualStr);
 }
 
 TEST(GetBoardMoves, StartPosition)
@@ -39,3 +41,20 @@ TEST(GetBoardMoves, StartPosition)
 	auto moves = b.GetMoves();
 	ASSERT_NO_FATAL_FAILURE(AssertMovesEq({ "5-9", "6-10", "6-9", "7-11", "7-10", "8-12", "8-11" }, moves));
 }
+/*
+TEST(GetBoardMoves, KingSimple)
+{
+	std::pair<std::string_view, std::vector<std::string>> test[] =
+	{
+		// { "W:WK1:B", { } }
+	};
+
+	for (const auto& i : test)
+	{
+		Board b(std::string(i.first));
+
+		auto moves = b.GetMoves();
+		ASSERT_NO_FATAL_FAILURE(AssertMovesEq(i.second, moves));
+	}
+}
+*/

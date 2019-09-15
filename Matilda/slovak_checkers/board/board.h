@@ -88,7 +88,7 @@ namespace SlovakCheckers
 
 		BoardMoves GetMoves() const;
 
-        void perform_move(const Move& move);
+        void PerformMove(const Move& move);
 
 		size_t GetStateHash() const;
 

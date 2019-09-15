@@ -112,7 +112,7 @@ R"#(^(B|W):(B|W)((?:K?(?:[1-9]|[1-2][0-9]|3[0-2]),){0,7}K?(?:[1-9]|[1-2][0-9]|3[
 		};
 	}
 
-	void Board::perform_move(const Move& move)
+	void Board::PerformMove(const Move& move)
     {
 		// piece performing the move
         auto activePiece = m_board[move.GetSteps().front()];
@@ -280,7 +280,7 @@ R"#(^(B|W):(B|W)((?:K?(?:[1-9]|[1-2][0-9]|3[0-2]),){0,7}K?(?:[1-9]|[1-2][0-9]|3[
 
     std::vector<Move> Board::GetSimpleMoves() const
     {
-        std::vector<Move> ret_val;
+        std::vector<Move> result;
 
         // possible moves
         for (uint8_t i = 0; i < SQUARES_COUNT; ++i)
@@ -288,40 +288,36 @@ R"#(^(B|W):(B|W)((?:K?(?:[1-9]|[1-2][0-9]|3[0-2]),){0,7}K?(?:[1-9]|[1-2][0-9]|3[
             if (!m_board.IsAt(i, m_player))
                 continue;
 
-            Piece active_piece = m_board[i];
+            Piece activePiece = m_board[i];
 
-            Directions piece_directions = GetDirectionsForPiece(active_piece);
-			for (uint32_t j = 0; j < piece_directions.size(); ++j)
+            Directions pieceDirections = GetDirectionsForPiece(activePiece);
+			for (uint32_t j = 0; j < pieceDirections.size(); ++j)
 			{
-				if (!piece_directions.test(j))
+				if (!pieceDirections.test(j))
 					continue; // direction is not set
 
-				Direction new_dir = uint32_to_dir(j);
+				Direction dir = uint32_to_dir(j);
 
-                auto next_square = i;
+                auto nextSquare = i;
                 while (true)
                 {
-                    next_square = get_next_square(next_square, new_dir);
+                    nextSquare = get_next_square(nextSquare, dir);
 
-                    if (next_square == INVALID_POS)
+                    if (nextSquare == INVALID_POS)
                         break; // end of board
 
-                    if (!m_board.IsPieceAt(next_square)) // check if empty
-                    {
-                        ret_val.emplace_back(std::initializer_list<uint8_t>{ i, next_square }, MoveType::SimpleMove);
-                    }
-                    else
-                    {
-                        break;
-                    }
+					if (m_board.IsPieceAt(nextSquare)) // check if empty
+						break;
 
-                    if (active_piece.GetType() == Type::Man)
-                        break;
+                    result.emplace_back(std::initializer_list<uint8_t>{ i, nextSquare }, MoveType::SimpleMove);
+
+                    if (activePiece.GetType() == Type::Man)
+                        break; // only kings can move more than one square
                 }
             }
         }
 
-        return ret_val;
+        return result;
     }
 
 	size_t Board::GetStateHash() const
